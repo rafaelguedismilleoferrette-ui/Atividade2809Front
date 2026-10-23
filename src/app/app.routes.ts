@@ -47,6 +47,11 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'marcas',
+        title: 'Marcas',
+        loadComponent: () => import('./components/marca/marca-listar').then((m) => m.MarcaListar),
+      },
+      {
         path: 'configuracoes',
         title: 'Configurações',
         loadComponent: () =>

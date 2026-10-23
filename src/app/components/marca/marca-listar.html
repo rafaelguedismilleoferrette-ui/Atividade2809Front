@@ -1,0 +1,94 @@
+<app-cabecalho-pagina titulo="Marcas" subtitulo="Consulte as marcas pelo nome." />
+
+<section class="glass-panel painel" aria-label="Consulta de marcas">
+  <form class="filtros" [formGroup]="formulario" (ngSubmit)="buscar()">
+    <div class="campo">
+      <label for="busca-marca">Nome da marca</label>
+      <input
+        pInputText
+        id="busca-marca"
+        type="search"
+        formControlName="nome"
+        placeholder="Ex.: Fiat"
+        maxlength="100"
+        aria-describedby="ajuda-marca erro-marca"
+        [attr.aria-invalid]="formulario.controls.nome.invalid && formulario.controls.nome.touched"
+      />
+      <small id="ajuda-marca">Deixe em branco para consultar as primeiras marcas.</small>
+      <small id="erro-marca" class="erro-campo" role="alert">
+        @if (formulario.controls.nome.invalid && formulario.controls.nome.touched) {
+          Use no máximo 100 caracteres.
+        }
+      </small>
+    </div>
+    <div class="acoes">
+      <button pButton type="submit" [disabled]="carregando()">
+        <svg data-p-icon="search" size="16" aria-hidden="true"></svg>
+        Buscar
+      </button>
+      <button
+        pButton
+        type="button"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="carregando()"
+        (click)="limpar()"
+      >
+        Limpar
+      </button>
+    </div>
+  </form>
+
+  <div [attr.aria-busy]="carregando()" aria-live="polite">
+    @if (carregando()) {
+      <p class="carregando" role="status">
+        <svg data-p-icon="spinner" size="20" [spin]="true" aria-hidden="true"></svg>
+        Carregando marcas…
+      </p>
+    } @else if (erro(); as mensagem) {
+      <app-estado-painel
+        tipo="erro"
+        titulo="Não foi possível carregar as marcas"
+        [mensagem]="mensagem"
+      >
+        <button pButton type="button" (click)="tentarNovamente()">Tentar novamente</button>
+      </app-estado-painel>
+    } @else if (marcas().length === 0) {
+      <app-estado-painel
+        [tipo]="nomeConsultado() ? 'sem-resultados' : 'vazio'"
+        titulo="Nenhuma marca encontrada"
+        [mensagem]="
+          nomeConsultado() ? 'Tente buscar por outro nome.' : 'Ainda não há marcas cadastradas.'
+        "
+      />
+    } @else {
+      <p class="resumo">
+        {{ marcas().length }}
+        {{ marcas().length === 1 ? 'marca encontrada' : 'marcas encontradas' }}
+        @if (nomeConsultado()) {
+          para “{{ nomeConsultado() }}”
+        }
+      </p>
+      <table>
+        <caption>
+          Marcas encontradas — até 10 resultados por consulta, em ordem alfabética.
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Nome</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (marca of marcas(); track marca.id) {
+            <tr>
+              <td>{{ marca.id }}</td>
+              <td>{{ marca.nome }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+  <p class="ajuda">A consulta mostra até 10 marcas. Refine o nome para encontrar outras marcas.</p>
+</section>

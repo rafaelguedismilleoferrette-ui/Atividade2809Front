@@ -1,0 +1,86 @@
+.painel {
+  padding: var(--ag-space-6);
+}
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--ag-space-4);
+  margin-bottom: var(--ag-space-4);
+}
+.campo {
+  flex: 1 1 260px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-2);
+}
+.campo label {
+  font-weight: 600;
+  color: var(--ag-navy);
+}
+.campo input {
+  width: 100%;
+}
+.campo small,
+.ajuda,
+.resumo,
+caption {
+  color: var(--ag-text-secondary);
+  font-size: 0.875rem;
+}
+.campo .erro-campo {
+  color: var(--ag-danger);
+}
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ag-space-2);
+  padding-top: 30px;
+}
+.carregando {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--ag-space-3);
+  padding: var(--ag-space-8);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+caption {
+  text-align: left;
+  padding-bottom: var(--ag-space-3);
+}
+th,
+td {
+  padding: var(--ag-space-3);
+  border-bottom: 1px solid var(--ag-glass-border);
+  overflow-wrap: anywhere;
+}
+th {
+  color: var(--ag-navy);
+  background: var(--ag-primary-soft);
+}
+th:first-child,
+td:first-child {
+  width: 80px;
+  font-variant-numeric: tabular-nums;
+}
+.ajuda {
+  margin: var(--ag-space-4) 0 0;
+}
+@media (max-width: 575.98px) {
+  .painel {
+    padding: var(--ag-space-4);
+  }
+  .acoes {
+    padding-top: 0;
+    width: 100%;
+  }
+  .acoes button {
+    flex: 1;
+  }
+}

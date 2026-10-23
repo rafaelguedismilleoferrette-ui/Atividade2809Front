@@ -93,6 +93,17 @@ código IBGE de 7 dígitos via `/cidades/buscar-codigo-ibge/{codigo}`. As opçõ
 para diferenciar cidades homônimas (há uma Cascavel no CE e outra no PR). O cliente é enviado com
 `cidade: { id }`, que é o que o `@ManyToOne` do backend espera — nunca o nome em texto.
 
+### Marcas (`/marcas`)
+
+Consulta integrada a `GET /marcas/listar-marcas?nome=...`, com `MarcaService`,
+formulário de busca por nome (até 100 caracteres), botão para limpar o filtro e
+tratamento de carregamento, vazio e erro com nova tentativa. O backend retorna
+até 10 marcas em ordem alfabética; a tela informa esse limite e permite refinar
+a busca. O filtro vazio consulta as primeiras marcas. A rota está no menu lateral.
+
+O backend atual oferece apenas consulta de marcas. Cadastro, edição e exclusão
+dependem de novos endpoints antes de adicionar os formulários correspondentes.
+
 ### Configurações (`/configuracoes`)
 
 Preferências salvas no navegador (iniciar com menu recolhido, linhas por página) e teste de
@@ -126,7 +137,7 @@ foi movido (com `git mv`) para `core/services/`.
 2. Crie a tela em `components/veiculo/` e a rota filha em `app.routes.ts` (`loadComponent`).
 3. Inclua o item em `layout/navegacao.ts` e o ícone correspondente na `Sidebar`.
 
-Veículos, Vendas, Ordens de Serviço e Marcas **não aparecem no menu** porque o backend ainda não
+Veículos, Vendas e Ordens de Serviço **não aparecem no menu** porque o backend ainda não
 tem controllers para eles.
 
 ---
@@ -183,7 +194,7 @@ preset [`core/tema/auto-gestao.preset.ts`](src/app/core/tema/auto-gestao.preset.
 
 ## Testes
 
-`npm run test:ci` — 85 testes em 14 arquivos:
+`npm run test:ci` — a suíte cobre:
 
 - serviços HTTP com `HttpTestingController` (URL, método e corpo de cada endpoint);
 - CPF/CNPJ (inclusive alfanumérico), telefone, CEP, e-mail, máscara e normalização do payload;
@@ -191,6 +202,7 @@ preset [`core/tema/auto-gestao.preset.ts`](src/app/core/tema/auto-gestao.preset.
   dados preservados após erro;
 - listagem: carregamento, filtros, estado vazio, erro com nova tentativa e exclusão só após
   confirmação;
+- marcas: consulta HTTP inicial, filtro por nome, limpeza, limite de resultados, erro e nova tentativa, validação e rota no menu;
 - dashboard: indicadores, estado vazio e erro;
 - menu: hambúrguer ausente no cabeçalho, seta na lateral, recolher/expandir no desktop e, no
   celular, gaveta com overlay, Esc, botão "X", trava de rolagem e fechamento ao navegar;
@@ -220,8 +232,8 @@ no `application.properties`.
 4. **Validação no servidor:** só `nome` é obrigatório no banco. Recomenda-se Bean Validation
    (CPF/CNPJ, e-mail, tamanhos).
 5. **Respostas de erro com stack trace** (`trace`) por causa do devtools — não expor em produção.
-6. **Módulos futuros:** não há controllers para Marcas (só a entidade), Veículos, Vendas e Ordens
-   de Serviço.
+6. **Módulos futuros:** Marcas tem controller de consulta, mas ainda não tem endpoints de
+   cadastro, edição ou exclusão. Não há controllers para Veículos, Vendas e Ordens de Serviço.
 7. **Autenticação:** não existe; o cabeçalho mostra "Administrador · Acesso local" apenas como
    identificação visual.
 

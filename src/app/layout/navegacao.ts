@@ -1,5 +1,5 @@
 /** Ícones usados no menu (cada um é importado no SidebarComponent). */
-export type IconeNavegacao = 'objects-column' | 'users' | 'cog';
+export type IconeNavegacao = 'objects-column' | 'users' | 'car' | 'cog';
 
 export interface ItemNavegacao {
   rotulo: string;
@@ -23,6 +23,7 @@ export const NAVEGACAO: GrupoNavegacao[] = [
     itens: [
       { rotulo: 'Dashboard', rota: '/dashboard', icone: 'objects-column' },
       { rotulo: 'Clientes', rota: '/clientes', icone: 'users' },
+      { rotulo: 'Marcas', rota: '/marcas', icone: 'car' },
     ],
   },
   {

@@ -77,6 +77,16 @@ describe('Navegação', () => {
     http.expectOne((r) => r.url.endsWith('/clientes/buscar-cliente/5'));
   });
 
+  it('abre marcas pelo menu e consulta a API', async () => {
+    const harness = await RouterTestingHarness.create('/marcas');
+    expect(harness.routeNativeElement?.querySelector('app-marca-listar')).not.toBeNull();
+    expect(harness.routeNativeElement?.querySelector('a[href="/marcas"]')).not.toBeNull();
+    expect(TestBed.inject(Title).getTitle()).toBe('Marcas · Auto Gestão');
+    TestBed.inject(HttpTestingController)
+      .expectOne((r) => r.url.endsWith('/marcas/listar-marcas') && r.params.get('nome') === '')
+      .flush([]);
+  });
+
   it('mostra a página 404 para rotas desconhecidas', async () => {
     const harness = await RouterTestingHarness.create('/veiculos');
     expect(harness.routeNativeElement?.textContent).toContain('Página não encontrada');
