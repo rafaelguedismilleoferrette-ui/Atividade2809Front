@@ -1,0 +1,228 @@
+<app-cabecalho-pagina
+  titulo="Clientes"
+  sobretitulo="Cadastros"
+  subtitulo="Pessoas físicas e jurídicas usadas em vendas e ordens de serviço."
+>
+  <a pButton routerLink="/clientes/novo">
+    <svg data-p-icon="plus" size="16"></svg>
+    Novo cliente
+  </a>
+</app-cabecalho-pagina>
+
+<section class="glass-panel painel" aria-labelledby="titulo-lista">
+  <h2 id="titulo-lista" class="ag-sr-only">Lista de clientes</h2>
+
+  <div class="filtros" role="search" aria-label="Filtrar clientes">
+    <div class="filtros__busca">
+      <label class="ag-sr-only" for="busca-cliente">Buscar por nome ou CPF/CNPJ</label>
+      <p-iconfield>
+        <p-inputicon>
+          <svg data-p-icon="search" size="16"></svg>
+        </p-inputicon>
+        <input
+          pInputText
+          id="busca-cliente"
+          type="search"
+          autocomplete="off"
+          placeholder="Buscar por nome ou CPF/CNPJ"
+          [ngModel]="busca()"
+          (ngModelChange)="alterarBusca($event)"
+        />
+      </p-iconfield>
+    </div>
+
+    <div class="filtros__tipo">
+      <label class="ag-sr-only" for="filtro-tipo">Tipo de pessoa</label>
+      <p-select
+        inputId="filtro-tipo"
+        [options]="tipoPessoaOptions"
+        optionLabel="descricao"
+        optionValue="valor"
+        [ngModel]="tipo()"
+        (ngModelChange)="alterarTipo($event)"
+      />
+    </div>
+
+    <button
+      pButton
+      type="button"
+      severity="secondary"
+      [outlined]="true"
+      [disabled]="carregando()"
+      (click)="carregarClientes()"
+      aria-label="Atualizar lista"
+      pTooltip="Atualizar lista"
+      tooltipPosition="top"
+    >
+      <svg data-p-icon="refresh" size="16" [spin]="carregando()"></svg>
+      <span class="filtros__rotulo-botao">Atualizar</span>
+    </button>
+  </div>
+
+  @if (carregando() && clientes().length === 0) {
+    <div class="carregando" role="status" aria-label="Carregando clientes">
+      @for (linha of linhasSkeleton; track linha) {
+        <div class="carregando__linha">
+          <p-skeleton width="2.5rem" height="1rem" />
+          <p-skeleton width="30%" height="1rem" />
+          <p-skeleton width="3rem" height="1.25rem" borderRadius="999px" />
+          <p-skeleton width="20%" height="1rem" />
+          <p-skeleton width="15%" height="1rem" />
+        </div>
+      }
+    </div>
+  } @else if (erro()) {
+    <app-estado-painel
+      tipo="erro"
+      titulo="Não foi possível carregar os clientes"
+      [mensagem]="erro()!"
+    >
+      <button pButton type="button" (click)="carregarClientes()">
+        <svg data-p-icon="refresh" size="16"></svg>
+        Tentar novamente
+      </button>
+    </app-estado-painel>
+  } @else if (clientes().length === 0) {
+    <app-estado-painel
+      titulo="Nenhum cliente cadastrado"
+      mensagem="Cadastre o primeiro cliente para começar a usar o sistema."
+    >
+      <a pButton routerLink="/clientes/novo">
+        <svg data-p-icon="user-plus" size="16"></svg>
+        Cadastrar cliente
+      </a>
+    </app-estado-painel>
+  } @else if (clientesFiltrados().length === 0) {
+    <app-estado-painel
+      tipo="sem-resultados"
+      titulo="Nenhum cliente encontrado"
+      mensagem="Nenhum cadastro corresponde aos filtros aplicados."
+    >
+      <button
+        pButton
+        type="button"
+        severity="secondary"
+        [outlined]="true"
+        (click)="limparFiltros()"
+      >
+        <svg data-p-icon="filter-slash" size="16"></svg>
+        Limpar filtros
+      </button>
+    </app-estado-painel>
+  } @else {
+    <p class="resumo" aria-live="polite">
+      @if (filtrosAtivos()) {
+        {{ clientesFiltrados().length }} de {{ clientes().length }} clientes
+      } @else {
+        {{ clientes().length }} {{ clientes().length === 1 ? 'cliente' : 'clientes' }}
+      }
+    </p>
+
+    <p-table
+      class="tabela-clientes"
+      [value]="clientesFiltrados()"
+      dataKey="id"
+      sortField="nome"
+      [sortOrder]="1"
+      [paginator]="true"
+      [rows]="preferencias.itensPorPagina()"
+      [(first)]="primeiro"
+      [rowsPerPageOptions]="opcoesLinhas"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="{first}–{last} de {totalRecords}"
+      [alwaysShowPaginator]="false"
+      [tableStyle]="{ 'min-width': '100%' }"
+    >
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="id" scope="col" class="col-id">ID <p-sorticon field="id" /></th>
+          <th pSortableColumn="nome" scope="col">Nome <p-sorticon field="nome" /></th>
+          <th pSortableColumn="tipoPessoa" scope="col">Tipo <p-sorticon field="tipoPessoa" /></th>
+          <th pSortableColumn="cpfCnpj" scope="col">CPF/CNPJ <p-sorticon field="cpfCnpj" /></th>
+          <th scope="col">Telefone</th>
+          <th scope="col">E-mail</th>
+          <th pSortableColumn="cidade.nome" scope="col">
+            Cidade <p-sorticon field="cidade.nome" />
+          </th>
+          <th scope="col" class="col-acoes"><span class="ag-sr-only">Ações</span></th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-cliente>
+        <tr [class.linha--excluindo]="excluindoId() === cliente.id">
+          <td data-rotulo="ID" class="col-id">{{ cliente.id }}</td>
+          <td data-rotulo="Nome" class="col-nome">{{ cliente.nome }}</td>
+          <td data-rotulo="Tipo">
+            @if (cliente.tipoPessoa) {
+              <span
+                class="selo"
+                [class.selo--pf]="cliente.tipoPessoa === 'PF'"
+                [class.selo--pj]="cliente.tipoPessoa === 'PJ'"
+                [attr.title]="cliente.tipoPessoa === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'"
+              >
+                {{ cliente.tipoPessoa }}
+              </span>
+            } @else {
+              <span class="texto-secundario">—</span>
+            }
+          </td>
+          <td data-rotulo="CPF/CNPJ" class="col-doc">{{ (cliente.cpfCnpj | documento) || '—' }}</td>
+          <td data-rotulo="Telefone" class="col-tel">{{ (cliente.telefone | telefone) || '—' }}</td>
+          <td data-rotulo="E-mail" class="col-email">
+            @if (cliente.email) {
+              <a [href]="'mailto:' + cliente.email" [attr.title]="cliente.email">{{
+                cliente.email
+              }}</a>
+            } @else {
+              <span class="texto-secundario">—</span>
+            }
+          </td>
+          <td data-rotulo="Cidade">
+            @if (cliente.cidade) {
+              <span class="cidade">
+                <svg data-p-icon="map-marker" size="14" aria-hidden="true"></svg>
+                {{ rotuloCidade(cliente.cidade) }}
+              </span>
+            } @else {
+              <span class="texto-secundario">Não informada</span>
+            }
+          </td>
+          <td class="col-acoes">
+            <div class="acoes">
+              <a
+                pButton
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [routerLink]="['/clientes', cliente.id, 'editar']"
+                [attr.aria-label]="'Editar ' + cliente.nome"
+                pTooltip="Editar"
+                tooltipPosition="top"
+              >
+                <svg data-p-icon="pencil" size="16"></svg>
+              </a>
+              <button
+                pButton
+                type="button"
+                [text]="true"
+                [rounded]="true"
+                severity="danger"
+                [disabled]="excluindoId() !== null"
+                [attr.aria-label]="'Excluir ' + cliente.nome"
+                pTooltip="Excluir"
+                tooltipPosition="top"
+                (click)="confirmarExclusao(cliente)"
+              >
+                @if (excluindoId() === cliente.id) {
+                  <svg data-p-icon="spinner" size="16" [spin]="true"></svg>
+                } @else {
+                  <svg data-p-icon="trash" size="16"></svg>
+                }
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</section>

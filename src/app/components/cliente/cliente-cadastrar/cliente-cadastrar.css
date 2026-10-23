@@ -1,0 +1,53 @@
+.formulario {
+  max-width: 1120px;
+}
+
+.formulario__topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ag-space-3);
+  margin-bottom: var(--ag-space-6);
+}
+
+/* fieldset sem a borda padrão do navegador */
+fieldset.secao-form {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+fieldset.secao-form + fieldset.secao-form {
+  margin-top: var(--ag-space-6);
+  padding-top: var(--ag-space-6);
+  border-top: 1px solid var(--ag-divider);
+}
+
+legend.secao-form__titulo {
+  float: left;
+  width: 100%;
+  padding: 0;
+}
+
+legend.secao-form__titulo + * {
+  clear: both;
+}
+
+.campo ::ng-deep .p-select {
+  width: 100%;
+}
+
+.carregando {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-4);
+}
+
+.carregando__linha {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--ag-space-4);
+  margin-bottom: var(--ag-space-4);
+}

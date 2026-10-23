@@ -1,0 +1,32 @@
+<a class="pular-conteudo" href="#conteudo-principal" (click)="pularParaConteudo($event)">
+  Pular para o conteúdo
+</a>
+
+<app-header />
+
+<div
+  class="corpo"
+  [class.corpo--recolhido]="!layout.menuExpandido()"
+  [class.corpo--gaveta]="layout.modoGaveta()"
+>
+  <app-sidebar (fechar)="fecharGavetaDevolvendoFoco()" />
+
+  @if (layout.modoGaveta()) {
+    <div
+      class="overlay"
+      data-testid="overlay-menu"
+      [class.overlay--visivel]="layout.gavetaAberta()"
+      aria-hidden="true"
+      (click)="fecharGavetaDevolvendoFoco()"
+    ></div>
+  }
+
+  <main id="conteudo-principal" class="conteudo" tabindex="-1">
+    <div class="conteudo__interno">
+      <router-outlet />
+    </div>
+  </main>
+</div>
+
+<p-toast position="top-right" />
+<p-confirmdialog [style]="{ width: 'min(460px, calc(100vw - 32px))' }" />

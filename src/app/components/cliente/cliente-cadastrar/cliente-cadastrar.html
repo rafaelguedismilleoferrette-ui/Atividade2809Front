@@ -1,0 +1,348 @@
+<app-cabecalho-pagina
+  sobretitulo="Clientes"
+  [titulo]="modoEdicao() ? 'Editar cliente' : 'Novo cliente'"
+  subtitulo="O seguinte cadastro será utilizado em Vendas e Ordens de Serviço."
+>
+  <a pButton routerLink="/clientes" severity="secondary" [text]="true">
+    <svg data-p-icon="arrow-left" size="16"></svg>
+    Voltar para a lista
+  </a>
+</app-cabecalho-pagina>
+
+<section class="glass-panel painel formulario" aria-labelledby="titulo-formulario">
+  <h2 id="titulo-formulario" class="ag-sr-only">
+    {{ modoEdicao() ? 'Formulário de edição de cliente' : 'Formulário de cadastro de cliente' }}
+  </h2>
+
+  @if (carregando()) {
+    <div class="carregando" role="status" aria-label="Carregando dados do cliente">
+      @for (bloco of [1, 2, 3]; track bloco) {
+        <p-skeleton width="30%" height="1.25rem" styleClass="carregando__titulo" />
+        <div class="carregando__linha">
+          <p-skeleton height="2.75rem" />
+          <p-skeleton height="2.75rem" />
+          <p-skeleton height="2.75rem" />
+        </div>
+      }
+    </div>
+  } @else if (erroCarregamento()) {
+    <app-estado-painel
+      tipo="erro"
+      titulo="Não foi possível abrir o cliente"
+      [mensagem]="erroCarregamento()!"
+    >
+      <button pButton type="button" (click)="carregarCliente()">
+        <svg data-p-icon="refresh" size="16"></svg>
+        Tentar novamente
+      </button>
+      <a pButton routerLink="/clientes" severity="secondary" [outlined]="true"
+        >Voltar para a lista</a
+      >
+    </app-estado-painel>
+  } @else {
+    <form [formGroup]="formularioCliente" (ngSubmit)="salvarCliente()">
+      <div class="formulario__topo">
+        <p class="legenda-obrigatorio">
+          Campos marcados com <span class="campo__obrigatorio" aria-hidden="true">*</span> são
+          obrigatórios.
+        </p>
+        @if (modoEdicao()) {
+          <span class="selo selo--pf">Cliente #{{ id() }}</span>
+        }
+      </div>
+
+      <!-- Dados principais -->
+      <fieldset class="secao-form">
+        <legend class="secao-form__titulo">
+          <svg data-p-icon="id-card" size="18" aria-hidden="true"></svg>
+          Dados do cliente
+        </legend>
+
+        <div class="form-grid">
+          <div class="campo campo--xl-6">
+            <label class="campo__rotulo" for="nome">
+              Nome<span class="campo__obrigatorio" aria-hidden="true">*</span>
+            </label>
+            <input
+              pInputText
+              id="nome"
+              autocomplete="off"
+              formControlName="nome"
+              maxlength="100"
+              aria-required="true"
+              [invalid]="!!erroDe('nome')"
+              [attr.aria-invalid]="!!erroDe('nome')"
+              [attr.aria-describedby]="erroDe('nome') ? 'nome-erro' : null"
+            />
+            @if (erroDe('nome'); as erro) {
+              <small id="nome-erro" class="campo__erro">
+                <svg data-p-icon="exclamation-circle" size="14" aria-hidden="true"></svg>{{ erro }}
+              </small>
+            }
+          </div>
+
+          <div class="campo campo--md-6 campo--xl-3">
+            <label class="campo__rotulo" for="tipoPessoa">
+              Tipo de pessoa<span class="campo__obrigatorio" aria-hidden="true">*</span>
+            </label>
+            <p-select
+              inputId="tipoPessoa"
+              formControlName="tipoPessoa"
+              [options]="tipoPessoaOptions"
+              optionLabel="descricao"
+              optionValue="valor"
+              placeholder="Selecione"
+              [invalid]="!!erroDe('tipoPessoa')"
+              ariaLabel="Tipo de pessoa"
+            />
+            @if (erroDe('tipoPessoa'); as erro) {
+              <small id="tipoPessoa-erro" class="campo__erro" role="alert">
+                <svg data-p-icon="exclamation-circle" size="14" aria-hidden="true"></svg>{{ erro }}
+              </small>
+            }
+          </div>
+
+          <div class="campo campo--md-6 campo--xl-3">
+            <label class="campo__rotulo" for="cpfCnpj">
+              {{ rotuloDocumento() }}<span class="campo__obrigatorio" aria-hidden="true">*</span>
+            </label>
+            <input
+              pInputText
+              id="cpfCnpj"
+              autocomplete="off"
+              formControlName="cpfCnpj"
+              [appMascara]="mascaraDocumento()"
+              [placeholder]="
+                tipoSelecionado() === 'PJ'
+                  ? '00.000.000/0000-00'
+                  : tipoSelecionado() === 'PF'
+                    ? '000.000.000-00'
+                    : 'Selecione o tipo primeiro'
+              "
+              aria-required="true"
+              [invalid]="!!erroDe('cpfCnpj')"
+              [attr.aria-invalid]="!!erroDe('cpfCnpj')"
+              [attr.aria-describedby]="erroDe('cpfCnpj') ? 'cpfCnpj-erro' : 'cpfCnpj-ajuda'"
+            />
+            @if (erroDe('cpfCnpj'); as erro) {
+              <small id="cpfCnpj-erro" class="campo__erro">
+                <svg data-p-icon="exclamation-circle" size="14" aria-hidden="true"></svg>{{ erro }}
+              </small>
+            } @else {
+              <small id="cpfCnpj-ajuda" class="campo__ajuda">
+                @if (tipoSelecionado() === 'PJ') {
+                  Aceita CNPJ numérico ou alfanumérico.
+                } @else if (tipoSelecionado() === 'PF') {
+                  Somente números; a pontuação é automática.
+                } @else {
+                  Escolha Pessoa Física ou Jurídica para liberar o campo.
+                }
+              </small>
+            }
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Contato -->
+      <fieldset class="secao-form">
+        <legend class="secao-form__titulo">
+          <svg data-p-icon="phone" size="18" aria-hidden="true"></svg>
+          Contato
+        </legend>
+
+        <div class="form-grid">
+          <div class="campo campo--md-5 campo--xl-4">
+            <label class="campo__rotulo" for="telefone">
+              Telefone<span class="campo__obrigatorio" aria-hidden="true">*</span>
+            </label>
+            <input
+              pInputText
+              id="telefone"
+              type="tel"
+              autocomplete="tel-national"
+              formControlName="telefone"
+              appMascara="telefone"
+              placeholder="(00) 00000-0000"
+              aria-required="true"
+              [invalid]="!!erroDe('telefone')"
+              [attr.aria-invalid]="!!erroDe('telefone')"
+              [attr.aria-describedby]="erroDe('telefone') ? 'telefone-erro' : null"
+            />
+            @if (erroDe('telefone'); as erro) {
+              <small id="telefone-erro" class="campo__erro">
+                <svg data-p-icon="exclamation-circle" size="14" aria-hidden="true"></svg>{{ erro }}
+              </small>
+            }
+          </div>
+
+          <div class="campo campo--md-7 campo--xl-8">
+            <label class="campo__rotulo" for="email">
+              E-mail<span class="campo__obrigatorio" aria-hidden="true">*</span>
+            </label>
+            <input
+              pInputText
+              id="email"
+              type="email"
+              autocomplete="email"
+              formControlName="email"
+              maxlength="120"
+              placeholder="nome@empresa.com.br"
+              aria-required="true"
+              [invalid]="!!erroDe('email')"
+              [attr.aria-invalid]="!!erroDe('email')"
+              [attr.aria-describedby]="erroDe('email') ? 'email-erro' : null"
+            />
+            @if (erroDe('email'); as erro) {
+              <small id="email-erro" class="campo__erro">
+                <svg data-p-icon="exclamation-circle" size="14" aria-hidden="true"></svg>{{ erro }}
+              </small>
+            }
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Endereço -->
+      <fieldset class="secao-form">
+        <legend class="secao-form__titulo">
+          <svg data-p-icon="map-marker" size="18" aria-hidden="true"></svg>
+          Endereço
+        </legend>
+
+        <div class="form-grid">
+          <div class="campo campo--md-8 campo--xl-6">
+            <label class="campo__rotulo" for="logradouro">
+              Logradouro<span class="campo__obrigatorio" aria-hidden="true">*</span>
+            </label>
+            <input
+              pInputText
+              id="logradouro"
+              autocomplete="address-line1"
+              formControlName="logradouro"
+              maxlength="120"
+              placeholder="Rua, avenida…"
+              aria-required="true"
+              [invalid]="!!erroDe('logradouro')"
+              [attr.aria-invalid]="!!erroDe('logradouro')"
+              [attr.aria-describedby]="erroDe('logradouro') ? 'logradouro-erro' : null"
+            />
+            @if (erroDe('logradouro'); as erro) {
+              <small id="logradouro-erro" class="campo__erro">
+                <svg data-p-icon="exclamation-circle" size="14" aria-hidden="true"></svg>{{ erro }}
+              </small>
+            }
+          </div>
+
+          <div class="campo campo--md-4 campo--xl-2">
+            <label class="campo__rotulo" for="numero">
+              Número<span class="campo__obrigatorio" aria-hidden="true">*</span>
+            </label>
+            <input
+              pInputText
+              id="numero"
+              autocomplete="off"
+              formControlName="numero"
+              maxlength="10"
+              aria-required="true"
+              [invalid]="!!erroDe('numero')"
+              [attr.aria-invalid]="!!erroDe('numero')"
+              [attr.aria-describedby]="erroDe('numero') ? 'numero-erro' : null"
+            />
+            @if (erroDe('numero'); as erro) {
+              <small id="numero-erro" class="campo__erro">
+                <svg data-p-icon="exclamation-circle" size="14" aria-hidden="true"></svg>{{ erro }}
+              </small>
+            }
+          </div>
+
+          <div class="campo campo--md-6 campo--xl-4">
+            <label class="campo__rotulo" for="bairro">
+              Bairro<span class="campo__obrigatorio" aria-hidden="true">*</span>
+            </label>
+            <input
+              pInputText
+              id="bairro"
+              autocomplete="off"
+              formControlName="bairro"
+              maxlength="80"
+              aria-required="true"
+              [invalid]="!!erroDe('bairro')"
+              [attr.aria-invalid]="!!erroDe('bairro')"
+              [attr.aria-describedby]="erroDe('bairro') ? 'bairro-erro' : null"
+            />
+            @if (erroDe('bairro'); as erro) {
+              <small id="bairro-erro" class="campo__erro">
+                <svg data-p-icon="exclamation-circle" size="14" aria-hidden="true"></svg>{{ erro }}
+              </small>
+            }
+          </div>
+
+          <div class="campo campo--md-6 campo--xl-4">
+            <label class="campo__rotulo" for="cep">
+              CEP<span class="campo__obrigatorio" aria-hidden="true">*</span>
+            </label>
+            <input
+              pInputText
+              id="cep"
+              autocomplete="postal-code"
+              formControlName="cep"
+              appMascara="cep"
+              placeholder="00000-000"
+              aria-required="true"
+              [invalid]="!!erroDe('cep')"
+              [attr.aria-invalid]="!!erroDe('cep')"
+              [attr.aria-describedby]="erroDe('cep') ? 'cep-erro' : null"
+            />
+            @if (erroDe('cep'); as erro) {
+              <small id="cep-erro" class="campo__erro">
+                <svg data-p-icon="exclamation-circle" size="14" aria-hidden="true"></svg>{{ erro }}
+              </small>
+            }
+          </div>
+
+          <div class="campo campo--xl-8">
+            <label class="campo__rotulo" for="cidade">
+              Cidade<span class="campo__obrigatorio" aria-hidden="true">*</span>
+            </label>
+            <app-cidade-seletor
+              inputId="cidade"
+              formControlName="cidade"
+              [invalido]="!!erroDe('cidade')"
+            />
+            @if (erroDe('cidade'); as erro) {
+              <small id="cidade-erro" class="campo__erro" role="alert">
+                <svg data-p-icon="exclamation-circle" size="14" aria-hidden="true"></svg>{{ erro }}
+              </small>
+            } @else {
+              <small class="campo__ajuda">
+                Busque pelo nome (mínimo 2 letras, com acentos) ou pelo código IBGE de 7 dígitos.
+              </small>
+            }
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="acoes-form">
+        <button
+          pButton
+          type="button"
+          severity="secondary"
+          [outlined]="true"
+          [disabled]="enviando()"
+          (click)="cancelar()"
+        >
+          <svg data-p-icon="times" size="16"></svg>
+          Cancelar
+        </button>
+        <button pButton type="submit" [disabled]="enviando()" [attr.aria-busy]="enviando()">
+          @if (enviando()) {
+            <svg data-p-icon="spinner" size="16" [spin]="true"></svg>
+            Salvando…
+          } @else {
+            <svg data-p-icon="save" size="16"></svg>
+            {{ modoEdicao() ? 'Salvar alterações' : 'Salvar cliente' }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</section>

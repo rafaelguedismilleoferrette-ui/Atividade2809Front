@@ -1,0 +1,233 @@
+<app-cabecalho-pagina
+  titulo="Dashboard"
+  sobretitulo="Visão geral"
+  subtitulo="Indicadores calculados a partir dos clientes cadastrados na API."
+>
+  <button
+    pButton
+    type="button"
+    severity="secondary"
+    [outlined]="true"
+    [disabled]="carregando()"
+    (click)="carregarIndicadores()"
+  >
+    <svg data-p-icon="refresh" size="16" [spin]="carregando()"></svg>
+    Atualizar
+  </button>
+  <a pButton routerLink="/clientes/novo">
+    <svg data-p-icon="plus" size="16"></svg>
+    Novo cliente
+  </a>
+</app-cabecalho-pagina>
+
+@if (carregando() && !resumo()) {
+  <div class="kpis" role="status" aria-label="Carregando indicadores">
+    @for (i of [1, 2, 3]; track i) {
+      <div class="glass-panel kpi">
+        <p-skeleton width="45%" height="1rem" />
+        <p-skeleton width="35%" height="2.75rem" />
+        <p-skeleton width="60%" height="0.875rem" />
+      </div>
+    }
+  </div>
+} @else if (erro() && !resumo()) {
+  <section class="glass-panel">
+    <app-estado-painel
+      tipo="erro"
+      titulo="Não foi possível carregar os indicadores"
+      [mensagem]="erro()!"
+    >
+      <button pButton type="button" (click)="carregarIndicadores()">
+        <svg data-p-icon="refresh" size="16"></svg>
+        Tentar novamente
+      </button>
+    </app-estado-painel>
+  </section>
+} @else if (resumo(); as r) {
+  <div
+    class="painel-dados"
+    [class.painel-dados--atualizando]="carregando()"
+    [attr.aria-busy]="carregando()"
+  >
+    @if (erro()) {
+      <p class="alerta-erro" role="alert">Falha ao atualizar: {{ erro() }}</p>
+    }
+
+    @if (r.total === 0) {
+      <section class="glass-panel">
+        <app-estado-painel
+          titulo="Ainda não há clientes"
+          mensagem="Os indicadores aparecem assim que o primeiro cliente for cadastrado."
+        >
+          <a pButton routerLink="/clientes/novo">
+            <svg data-p-icon="user-plus" size="16"></svg>
+            Cadastrar primeiro cliente
+          </a>
+        </app-estado-painel>
+      </section>
+    } @else {
+      <!-- Indicadores -->
+      <section class="kpis" aria-label="Indicadores de clientes">
+        <article class="glass-panel kpi kpi--destaque">
+          <div class="kpi__topo">
+            <h2 class="kpi__rotulo">Total de clientes</h2>
+            <span class="kpi__icone" aria-hidden="true"
+              ><svg data-p-icon="users" size="20"></svg
+            ></span>
+          </div>
+          <p class="kpi__valor kpi__valor--hero">{{ r.total | number: '1.0-0' }}</p>
+          <a class="kpi__link" routerLink="/clientes">
+            Ver lista completa
+            <svg data-p-icon="arrow-right" size="14" aria-hidden="true"></svg>
+          </a>
+        </article>
+
+        <article class="glass-panel kpi">
+          <div class="kpi__topo">
+            <h2 class="kpi__rotulo">Pessoas físicas</h2>
+            <span class="kpi__icone kpi__icone--pf" aria-hidden="true"
+              ><svg data-p-icon="user" size="20"></svg
+            ></span>
+          </div>
+          <p class="kpi__valor">{{ r.pessoasFisicas | number: '1.0-0' }}</p>
+          <p class="kpi__detalhe">
+            {{ percentual(r.pessoasFisicas, r.total) }}% dos clientes · CPF
+          </p>
+        </article>
+
+        <article class="glass-panel kpi">
+          <div class="kpi__topo">
+            <h2 class="kpi__rotulo">Pessoas jurídicas</h2>
+            <span class="kpi__icone kpi__icone--pj" aria-hidden="true"
+              ><svg data-p-icon="building" size="20"></svg
+            ></span>
+          </div>
+          <p class="kpi__valor">{{ r.pessoasJuridicas | number: '1.0-0' }}</p>
+          <p class="kpi__detalhe">
+            {{ percentual(r.pessoasJuridicas, r.total) }}% dos clientes · CNPJ
+          </p>
+        </article>
+      </section>
+
+      <div class="grade">
+        <!-- Composição PF x PJ -->
+        <section class="glass-panel painel grade__composicao" aria-labelledby="titulo-composicao">
+          <div class="painel__cabecalho">
+            <div>
+              <h2 id="titulo-composicao" class="painel__titulo">
+                <svg data-p-icon="chart-bar" size="18" aria-hidden="true"></svg>
+                Composição da carteira
+              </h2>
+              <p class="painel__descricao">Distribuição por tipo de pessoa.</p>
+            </div>
+          </div>
+
+          <app-grafico-composicao [segmentos]="composicao()" />
+        </section>
+
+        <!-- Ações rápidas -->
+        <section class="glass-panel painel grade__acoes" aria-labelledby="titulo-acoes">
+          <h2 id="titulo-acoes" class="painel__titulo">Acesso rápido</h2>
+          <div class="atalhos">
+            <a class="atalho" routerLink="/clientes/novo">
+              <span class="atalho__icone" aria-hidden="true"
+                ><svg data-p-icon="user-plus" size="20"></svg
+              ></span>
+              <span>
+                <span class="atalho__titulo">Cadastrar cliente</span>
+                <span class="atalho__descricao">Pessoa física ou jurídica</span>
+              </span>
+              <svg
+                class="atalho__seta"
+                data-p-icon="arrow-right"
+                size="16"
+                aria-hidden="true"
+              ></svg>
+            </a>
+            <a class="atalho" routerLink="/clientes">
+              <span class="atalho__icone" aria-hidden="true"
+                ><svg data-p-icon="users" size="20"></svg
+              ></span>
+              <span>
+                <span class="atalho__titulo">Gerenciar clientes</span>
+                <span class="atalho__descricao">Buscar, editar e excluir</span>
+              </span>
+              <svg
+                class="atalho__seta"
+                data-p-icon="arrow-right"
+                size="16"
+                aria-hidden="true"
+              ></svg>
+            </a>
+          </div>
+        </section>
+
+        <!-- Cidades -->
+        <section class="glass-panel painel grade__cidades" aria-labelledby="titulo-cidades">
+          <div class="painel__cabecalho">
+            <div>
+              <h2 id="titulo-cidades" class="painel__titulo">
+                <svg data-p-icon="map-marker" size="18" aria-hidden="true"></svg>
+                Cidades com mais clientes
+              </h2>
+              <p class="painel__descricao">
+                @if (r.semCidade > 0) {
+                  {{ r.semCidade }} {{ r.semCidade === 1 ? 'cadastro' : 'cadastros' }} sem cidade
+                  informada.
+                } @else {
+                  Todos os cadastros têm cidade informada.
+                }
+              </p>
+            </div>
+          </div>
+
+          @if (r.principaisCidades.length === 0) {
+            <p class="texto-secundario">Nenhum cliente com cidade vinculada.</p>
+          } @else {
+            <app-grafico-barras [itens]="r.principaisCidades" [totalGeral]="r.total" />
+          }
+        </section>
+
+        <!-- Recentes -->
+        <section class="glass-panel painel grade__recentes" aria-labelledby="titulo-recentes">
+          <div class="painel__cabecalho">
+            <div>
+              <h2 id="titulo-recentes" class="painel__titulo">
+                <svg data-p-icon="clock" size="18" aria-hidden="true"></svg>
+                Últimos cadastrados
+              </h2>
+              <p class="painel__descricao">Os {{ r.recentes.length }} registros mais recentes.</p>
+            </div>
+          </div>
+
+          <ul class="recentes">
+            @for (cliente of r.recentes; track cliente.id) {
+              <li>
+                <a class="recentes__item" [routerLink]="['/clientes', cliente.id, 'editar']">
+                  <span class="recentes__avatar" aria-hidden="true">{{
+                    cliente.nome.charAt(0).toUpperCase()
+                  }}</span>
+                  <span class="recentes__textos">
+                    <span class="recentes__nome">{{ cliente.nome }}</span>
+                    <span class="recentes__detalhe">
+                      {{ rotuloCidade(cliente.cidade) || 'Cidade não informada' }}
+                    </span>
+                  </span>
+                  @if (cliente.tipoPessoa) {
+                    <span
+                      class="selo"
+                      [class.selo--pf]="cliente.tipoPessoa === 'PF'"
+                      [class.selo--pj]="cliente.tipoPessoa === 'PJ'"
+                    >
+                      {{ cliente.tipoPessoa }}
+                    </span>
+                  }
+                </a>
+              </li>
+            }
+          </ul>
+        </section>
+      </div>
+    }
+  </div>
+}

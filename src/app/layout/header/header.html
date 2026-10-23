@@ -1,0 +1,30 @@
+<header class="header glass">
+  <a
+    class="marca"
+    routerLink="/dashboard"
+    [attr.aria-label]="nomeSistema + ': ir para o dashboard'"
+  >
+    <span class="marca__logo" aria-hidden="true">
+      <svg data-p-icon="car" size="20"></svg>
+    </span>
+    <span class="marca__textos">
+      <span class="marca__nome">{{ nomeSistema }}</span>
+      <span class="marca__sub">Concessionária</span>
+    </span>
+  </a>
+
+  @if (titulo()) {
+    <span class="header__divisor" aria-hidden="true"></span>
+    <p class="header__contexto">{{ titulo() }}</p>
+  }
+
+  <div class="header__usuario" title="Autenticação ainda não disponível no backend">
+    <span class="header__avatar" aria-hidden="true">
+      <svg data-p-icon="user" size="18"></svg>
+    </span>
+    <span class="header__usuario-textos">
+      <span class="header__usuario-nome">Administrador</span>
+      <span class="header__usuario-papel">Acesso local</span>
+    </span>
+  </div>
+</header>

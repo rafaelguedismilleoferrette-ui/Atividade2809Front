@@ -1,0 +1,45 @@
+<p-autocomplete
+  [inputId]="inputId()"
+  [ngModel]="valor()"
+  [ngModelOptions]="{ standalone: true }"
+  (ngModelChange)="selecionar($event)"
+  [suggestions]="sugestoes()"
+  (completeMethod)="pesquisar($event)"
+  (onBlur)="aoTocar()"
+  [optionLabel]="rotulo"
+  dataKey="id"
+  [minQueryLength]="2"
+  [delay]="350"
+  [forceSelection]="true"
+  [showClear]="true"
+  [showEmptyMessage]="true"
+  [emptyMessage]="mensagemVazia()"
+  [invalid]="invalido()"
+  [disabled]="desabilitado()"
+  [fluid]="true"
+  placeholder="Digite o nome ou o código IBGE"
+  appendTo="body"
+  autocomplete="off"
+>
+  <ng-template #item let-cidade>
+    <div class="opcao-cidade">
+      <svg data-p-icon="map-marker" size="14" aria-hidden="true"></svg>
+      <span class="opcao-cidade__nome">{{ cidade.nome }}</span>
+      @if (cidade.estado) {
+        <span class="opcao-cidade__uf" [attr.title]="cidade.estado.nome">{{
+          cidade.estado.uf
+        }}</span>
+      }
+      @if (cidade.ibge) {
+        <span class="opcao-cidade__ibge">IBGE {{ cidade.ibge }}</span>
+      }
+    </div>
+  </ng-template>
+  <ng-template #footer>
+    @if (limiteAtingido()) {
+      <p class="rodape-cidades">
+        Exibindo os 10 primeiros resultados. Digite mais letras para refinar.
+      </p>
+    }
+  </ng-template>
+</p-autocomplete>

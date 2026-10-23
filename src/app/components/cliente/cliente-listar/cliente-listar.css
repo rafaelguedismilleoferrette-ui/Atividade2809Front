@@ -1,0 +1,190 @@
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ag-space-3);
+  margin-bottom: var(--ag-space-4);
+}
+
+.filtros__busca {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.filtros__busca input {
+  width: 100%;
+}
+
+.filtros__tipo {
+  flex: 0 1 200px;
+}
+
+.filtros__tipo ::ng-deep .p-select {
+  width: 100%;
+}
+
+.resumo {
+  margin: 0 0 var(--ag-space-2);
+  font-size: 0.875rem;
+  color: var(--ag-text-secondary);
+}
+
+.carregando {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-4);
+  padding: var(--ag-space-4) 0;
+}
+
+.carregando__linha {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-5);
+}
+
+.col-id {
+  width: 72px;
+  color: var(--ag-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.col-nome {
+  min-width: 160px;
+  font-weight: 600;
+  color: var(--ag-navy);
+}
+
+.col-doc,
+.col-tel {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabela-clientes ::ng-deep .p-datatable-table-container {
+  overflow-x: auto;
+}
+
+.tabela-clientes ::ng-deep th {
+  white-space: nowrap;
+}
+
+.col-email a {
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  color: var(--ag-primary);
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+.col-email a:hover {
+  text-decoration: underline;
+}
+
+/* Ações fixas à direita: continuam visíveis quando a tabela rola na horizontal. */
+.col-acoes {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  width: 104px;
+  text-align: right;
+  background: #f6f9fc; /* opaco: o conteúdo rolado passa por baixo */
+  box-shadow: -10px 0 12px -10px rgba(24, 45, 73, 0.18);
+}
+
+.acoes {
+  display: inline-flex;
+  gap: var(--ag-space-1);
+}
+
+.cidade {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.cidade svg {
+  color: var(--ag-accent);
+}
+
+.linha--excluindo {
+  opacity: 0.55;
+}
+
+/* Telas pequenas: cada linha vira um cartão com rótulos. */
+@media (max-width: 767.98px) {
+  .filtros__tipo {
+    flex: 1 1 160px;
+  }
+
+  .filtros__rotulo-botao {
+    display: none;
+  }
+
+  .tabela-clientes ::ng-deep thead {
+    display: none;
+  }
+
+  .tabela-clientes ::ng-deep table,
+  .tabela-clientes ::ng-deep tbody,
+  .tabela-clientes ::ng-deep tr,
+  .tabela-clientes ::ng-deep td {
+    display: block;
+    width: 100%;
+  }
+
+  .tabela-clientes ::ng-deep tbody > tr {
+    position: relative;
+    margin-bottom: var(--ag-space-3);
+    padding: var(--ag-space-3) var(--ag-space-4);
+    border: 1px solid var(--ag-divider);
+    border-radius: var(--ag-radius-md);
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .tabela-clientes ::ng-deep tbody > tr > td {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--ag-space-4);
+    padding: 6px 0;
+    border: 0;
+    text-align: right;
+  }
+
+  .tabela-clientes ::ng-deep tbody > tr > td[data-rotulo]::before {
+    content: attr(data-rotulo);
+    flex: none;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ag-text-secondary);
+    text-align: left;
+  }
+
+  .col-id,
+  .col-acoes {
+    position: static;
+    width: auto;
+    background: none;
+    box-shadow: none;
+  }
+
+  .col-email a {
+    max-width: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .col-nome {
+    min-width: 0;
+  }
+
+  .tabela-clientes ::ng-deep td.col-acoes {
+    justify-content: flex-end;
+    margin-top: var(--ag-space-2);
+    padding-top: var(--ag-space-2);
+    border-top: 1px solid var(--ag-divider);
+  }
+}

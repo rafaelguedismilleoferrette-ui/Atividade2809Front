@@ -1,0 +1,35 @@
+import { Translation } from 'primeng/api';
+
+/** Textos internos do PrimeNG em português (botões, paginação, leitores de tela). */
+export const TRADUCAO_PRIMENG: Translation = {
+  accept: 'Sim',
+  reject: 'Não',
+  cancel: 'Cancelar',
+  clear: 'Limpar',
+  apply: 'Aplicar',
+  emptyMessage: 'Nenhum resultado encontrado',
+  emptyFilterMessage: 'Nenhum resultado encontrado',
+  emptySearchMessage: 'Nenhum resultado encontrado',
+  emptySelectionMessage: 'Nenhum item selecionado',
+  searchMessage: '{0} resultados disponíveis',
+  selectionMessage: '{0} itens selecionados',
+  pending: 'Pendente',
+  aria: {
+    close: 'Fechar',
+    previous: 'Anterior',
+    next: 'Próximo',
+    navigation: 'Navegação',
+    pageLabel: 'Página {page}',
+    firstPageLabel: 'Primeira página',
+    lastPageLabel: 'Última página',
+    nextPageLabel: 'Próxima página',
+    prevPageLabel: 'Página anterior',
+    previousPageLabel: 'Página anterior',
+    rowsPerPageLabel: 'Linhas por página',
+    jumpToPageDropdownLabel: 'Ir para a página',
+    jumpToPageInputLabel: 'Ir para a página',
+    selectAll: 'Selecionar todos',
+    unselectAll: 'Desmarcar todos',
+    removeLabel: 'Remover',
+  },
+};

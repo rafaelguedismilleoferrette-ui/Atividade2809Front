@@ -1,0 +1,93 @@
+<div
+  class="lateral"
+  [class.lateral--recolhida]="recolhido()"
+  [class.lateral--gaveta]="layout.modoGaveta()"
+  [class.lateral--aberta]="layout.gavetaAberta()"
+  pFocusTrap
+  [pFocusTrapDisabled]="!(layout.modoGaveta() && layout.gavetaAberta())"
+>
+  <nav
+    id="menu-lateral"
+    class="sidebar glass"
+    aria-label="Menu principal"
+    [class.sidebar--recolhido]="recolhido()"
+    [class.sidebar--gaveta]="layout.modoGaveta()"
+    [class.sidebar--aberta]="layout.gavetaAberta()"
+    [attr.inert]="inerte() ? '' : null"
+  >
+    @if (layout.modoGaveta()) {
+      <div class="sidebar__topo">
+        <span class="sidebar__marca">
+          <span class="sidebar__logo" aria-hidden="true">
+            <svg data-p-icon="car" size="18"></svg>
+          </span>
+          {{ nomeSistema }}
+        </span>
+        <button
+          #botaoFechar
+          type="button"
+          class="botao-icone"
+          aria-label="Fechar menu"
+          (click)="fechar.emit()"
+        >
+          <svg data-p-icon="times" size="18"></svg>
+        </button>
+      </div>
+    }
+
+    @for (grupo of grupos; track grupo.titulo) {
+      <div class="sidebar__grupo">
+        <p class="sidebar__grupo-titulo" [id]="'grupo-' + $index">{{ grupo.titulo }}</p>
+        <ul class="sidebar__lista" [attr.aria-labelledby]="'grupo-' + $index">
+          @for (item of grupo.itens; track item.rota) {
+            <li>
+              <a
+                class="sidebar__link"
+                [routerLink]="item.rota"
+                routerLinkActive="sidebar__link--ativo"
+                ariaCurrentWhenActive="page"
+                [pTooltip]="item.rotulo"
+                tooltipPosition="right"
+                [tooltipDisabled]="!recolhido()"
+              >
+                <span class="sidebar__icone" aria-hidden="true">
+                  @switch (item.icone) {
+                    @case ('objects-column') {
+                      <svg data-p-icon="objects-column" size="20"></svg>
+                    }
+                    @case ('users') {
+                      <svg data-p-icon="users" size="20"></svg>
+                    }
+                    @case ('cog') {
+                      <svg data-p-icon="cog" size="20"></svg>
+                    }
+                  }
+                </span>
+                <span class="sidebar__rotulo">{{ item.rotulo }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </nav>
+
+  <!--
+    Seta na borda do menu: no desktop alterna entre trilho de ícones e menu
+    completo; no celular é a aba que abre/fecha a gaveta.
+  -->
+  <button
+    id="botao-menu"
+    type="button"
+    class="alternador"
+    aria-controls="menu-lateral"
+    [attr.aria-expanded]="layout.menuVisivel()"
+    [attr.aria-label]="layout.rotuloBotaoMenu()"
+    [pTooltip]="layout.rotuloBotaoMenu()"
+    tooltipPosition="right"
+    [tooltipDisabled]="layout.modoGaveta()"
+    (click)="layout.alternarMenu()"
+  >
+    <svg data-p-icon="angle-right" size="16" class="alternador__seta" aria-hidden="true"></svg>
+  </button>
+</div>

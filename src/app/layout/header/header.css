@@ -1,0 +1,140 @@
+:host {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: block;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-3);
+  height: var(--ag-header-h);
+  padding: 0 var(--ag-gutter);
+  border-width: 0 0 1px;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-3);
+  min-width: 0;
+  padding: 4px 8px 4px 4px;
+  border-radius: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.marca__logo {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(
+    140deg,
+    var(--ag-navy) 0%,
+    var(--ag-primary) 60%,
+    var(--ag-accent) 100%
+  );
+  box-shadow: 0 6px 16px rgba(35, 89, 157, 0.3);
+}
+
+.marca__textos {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.marca__nome {
+  font-size: 1.0625rem;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  color: var(--ag-navy);
+}
+
+.marca__sub {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ag-text-secondary);
+}
+
+.header__divisor {
+  width: 1px;
+  height: 28px;
+  margin: 0 var(--ag-space-1);
+  background: var(--ag-divider);
+}
+
+.header__contexto {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font-weight: 600;
+  color: var(--ag-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header__usuario {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-2);
+  margin-left: auto;
+  padding: 4px 12px 4px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.header__avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: var(--ag-primary);
+  background: var(--ag-primary-soft);
+}
+
+.header__usuario-textos {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.header__usuario-nome {
+  font-size: 0.875rem;
+  font-weight: 650;
+  color: var(--ag-navy);
+}
+
+.header__usuario-papel {
+  font-size: 0.75rem;
+  color: var(--ag-text-secondary);
+}
+
+@media (max-width: 767.98px) {
+  .marca__sub,
+  .header__usuario-textos {
+    display: none;
+  }
+
+  .header__usuario {
+    padding: 3px;
+  }
+}
+
+@media (max-width: 479.98px) {
+  .marca__textos,
+  .header__divisor {
+    display: none;
+  }
+}

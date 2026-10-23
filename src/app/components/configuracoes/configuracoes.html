@@ -1,0 +1,113 @@
+<app-cabecalho-pagina
+  titulo="Configurações"
+  subtitulo="Preferências da interface (salvas neste navegador) e diagnóstico da conexão com a API."
+/>
+
+<div class="config-grid">
+  <section class="glass-panel painel" aria-labelledby="titulo-preferencias">
+    <div class="painel__cabecalho">
+      <div>
+        <h2 id="titulo-preferencias" class="painel__titulo">
+          <svg data-p-icon="sliders-h" size="18" aria-hidden="true"></svg>
+          Interface
+        </h2>
+        <p class="painel__descricao">Aplicadas imediatamente e lembradas na próxima visita.</p>
+      </div>
+    </div>
+
+    <div class="preferencia">
+      <div class="preferencia__textos">
+        <label class="preferencia__rotulo" for="pref-menu">Iniciar com o menu recolhido</label>
+        <p class="preferencia__ajuda">No computador, mostra apenas os ícones do menu lateral.</p>
+      </div>
+      <p-toggleswitch
+        inputId="pref-menu"
+        [ngModel]="preferencias.menuRecolhido()"
+        (ngModelChange)="alterarMenuRecolhido($event)"
+      />
+    </div>
+
+    <div class="preferencia">
+      <div class="preferencia__textos">
+        <label class="preferencia__rotulo" for="pref-itens">Linhas por página</label>
+        <p class="preferencia__ajuda">Quantidade inicial de registros na tabela de clientes.</p>
+      </div>
+      <p-select
+        inputId="pref-itens"
+        class="preferencia__select"
+        [options]="opcoesItens"
+        optionLabel="rotulo"
+        optionValue="valor"
+        [ngModel]="preferencias.itensPorPagina()"
+        (ngModelChange)="preferencias.itensPorPagina.set($event)"
+      />
+    </div>
+
+    <div class="painel__rodape">
+      <button
+        pButton
+        type="button"
+        severity="secondary"
+        [outlined]="true"
+        (click)="restaurarPadrao()"
+      >
+        <svg data-p-icon="undo" size="16"></svg>
+        Restaurar padrão
+      </button>
+    </div>
+  </section>
+
+  <section class="glass-panel painel" aria-labelledby="titulo-api">
+    <div class="painel__cabecalho">
+      <div>
+        <h2 id="titulo-api" class="painel__titulo">
+          <svg data-p-icon="server" size="18" aria-hidden="true"></svg>
+          Conexão com a API
+        </h2>
+        <p class="painel__descricao">Backend Spring Boot do projeto (clientes e cidades).</p>
+      </div>
+    </div>
+
+    <dl class="detalhes">
+      <div>
+        <dt>Endereço base</dt>
+        <dd>
+          <code>{{ apiUrl }}</code>
+        </dd>
+      </div>
+      @if (usaProxy) {
+        <div>
+          <dt>Modo</dt>
+          <dd>Proxy de desenvolvimento → <code>http://localhost:8080</code></dd>
+        </div>
+      }
+    </dl>
+
+    <button pButton type="button" [disabled]="testando()" (click)="testarConexao()">
+      @if (testando()) {
+        <svg data-p-icon="spinner" size="16" [spin]="true"></svg>
+        Testando…
+      } @else {
+        <svg data-p-icon="wifi" size="16"></svg>
+        Testar conexão
+      }
+    </button>
+
+    <div class="resultado" aria-live="polite">
+      @if (resultado(); as r) {
+        @if (r.estado === 'ok') {
+          <p class="resultado__item resultado__item--ok">
+            <svg data-p-icon="check-circle" size="18" aria-hidden="true"></svg>
+            API respondeu em {{ r.tempoMs }} ms · {{ r.clientes }}
+            {{ r.clientes === 1 ? 'cliente cadastrado' : 'clientes cadastrados' }}.
+          </p>
+        } @else {
+          <p class="resultado__item resultado__item--erro">
+            <svg data-p-icon="exclamation-triangle" size="18" aria-hidden="true"></svg>
+            {{ r.mensagem }}
+          </p>
+        }
+      }
+    </div>
+  </section>
+</div>

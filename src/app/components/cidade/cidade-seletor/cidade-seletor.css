@@ -1,0 +1,44 @@
+:host {
+  display: block;
+}
+
+/* O painel de opções é anexado ao <body>, por isso os estilos usam ::ng-deep. */
+::ng-deep .opcao-cidade {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+::ng-deep .opcao-cidade svg {
+  flex: none;
+  color: var(--ag-accent);
+}
+
+::ng-deep .opcao-cidade__nome {
+  flex: 1 1 auto;
+  font-weight: 600;
+}
+
+::ng-deep .opcao-cidade__uf {
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #1a4071;
+  background: rgba(58, 111, 176, 0.14);
+}
+
+::ng-deep .opcao-cidade__ibge {
+  font-size: 0.75rem;
+  color: var(--ag-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+::ng-deep .rodape-cidades {
+  margin: 0;
+  padding: 8px 12px;
+  border-top: 1px solid var(--ag-divider);
+  font-size: 0.8125rem;
+  color: var(--ag-text-secondary);
+}
