@@ -1,7 +1,7 @@
 .filtros {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-end;
   gap: var(--ag-space-3);
   margin-bottom: var(--ag-space-4);
 }
@@ -16,11 +16,43 @@
 }
 
 .filtros__tipo {
-  flex: 0 1 200px;
+  flex: 1 1 180px;
 }
 
-.filtros__tipo ::ng-deep .p-select {
+.filtros ::ng-deep .p-select {
   width: 100%;
+}
+
+.filtros__uf {
+  flex: 0 1 100px;
+}
+
+.filtros__cidade {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.filtro-rotulo {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ag-text-secondary);
+}
+
+.filtros__incompletos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.filtros__incompletos input {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--ag-primary);
 }
 
 .resumo {
@@ -83,14 +115,13 @@
   text-decoration: underline;
 }
 
-/* Ações fixas à direita: continuam visíveis quando a tabela rola na horizontal. */
 .col-acoes {
   position: sticky;
   right: 0;
   z-index: 1;
-  width: 104px;
+  width: 148px;
   text-align: right;
-  background: #f6f9fc; /* opaco: o conteúdo rolado passa por baixo */
+  background: var(--ag-surface);
   box-shadow: -10px 0 12px -10px rgba(24, 45, 73, 0.18);
 }
 
@@ -114,7 +145,6 @@
   opacity: 0.55;
 }
 
-/* Telas pequenas: cada linha vira um cartão com rótulos. */
 @media (max-width: 767.98px) {
   .filtros__tipo {
     flex: 1 1 160px;
@@ -142,7 +172,7 @@
     padding: var(--ag-space-3) var(--ag-space-4);
     border: 1px solid var(--ag-divider);
     border-radius: var(--ag-radius-md);
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--ag-glass-bg);
   }
 
   .tabela-clientes ::ng-deep tbody > tr > td {

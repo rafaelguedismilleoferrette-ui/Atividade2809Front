@@ -1,10 +1,28 @@
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 
-/**
- * Tema Aura com a paleta da Auto Gestão.
- * As variáveis CSS equivalentes (para o layout) estão em `src/styles.css`.
- */
+const coresDoTema = {
+  text: {
+    color: 'var(--ag-text)',
+    hoverColor: 'var(--ag-navy)',
+    mutedColor: 'var(--ag-text-secondary)',
+    hoverMutedColor: 'var(--ag-text)',
+  },
+  formField: {
+    background: 'var(--ag-input-bg)',
+    borderColor: 'var(--ag-input-border)',
+    hoverBorderColor: 'var(--ag-accent)',
+    focusBorderColor: 'var(--ag-primary)',
+    color: 'var(--ag-text)',
+    placeholderColor: 'var(--ag-text-secondary)',
+  },
+  content: {
+    background: 'var(--ag-surface)',
+    borderColor: 'var(--ag-divider)',
+    color: 'var(--ag-text)',
+  },
+};
+
 export const AutoGestaoPreset = definePreset(Aura, {
   semantic: {
     primary: {
@@ -20,15 +38,8 @@ export const AutoGestaoPreset = definePreset(Aura, {
       900: '#17263b',
       950: '#0e1826',
     },
-    typography: {
-      fontSize: '0.9375rem',
-    },
-    text: {
-      color: '#1c344d',
-      hoverColor: '#17263b',
-      mutedColor: '#62748a',
-      hoverMutedColor: '#4f6177',
-    },
+    typography: { fontSize: '0.9375rem' },
+    colorScheme: { light: coresDoTema, dark: coresDoTema },
     focusRing: {
       width: '2px',
       style: 'solid',
@@ -40,9 +51,6 @@ export const AutoGestaoPreset = definePreset(Aura, {
       borderRadius: '10px',
       paddingY: '0.5625rem',
       paddingX: '0.75rem',
-      background: 'rgba(255, 255, 255, 0.86)',
-      borderColor: 'rgba(28, 52, 77, 0.2)',
-      hoverBorderColor: 'rgba(28, 52, 77, 0.36)',
       focusRing: {
         width: '0',
         style: 'none',
@@ -51,32 +59,28 @@ export const AutoGestaoPreset = definePreset(Aura, {
         shadow: '0 0 0 3px rgba(58, 111, 176, 0.28)',
       },
     },
-    content: {
-      borderRadius: '12px',
-    },
+    content: { borderRadius: '12px' },
   },
   components: {
     datatable: {
       header: { background: 'transparent' },
       headerCell: {
         background: 'transparent',
-        hoverBackground: 'rgba(35, 89, 157, 0.06)',
-        selectedBackground: 'rgba(35, 89, 157, 0.08)',
-        borderColor: 'rgba(28, 52, 77, 0.1)',
-        color: '#62748a',
-        hoverColor: '#1c344d',
-        selectedColor: '#23599d',
+        hoverBackground: 'var(--ag-primary-softer)',
+        selectedBackground: 'var(--ag-primary-soft)',
+        borderColor: 'var(--ag-divider)',
+        color: 'var(--ag-text-secondary)',
+        hoverColor: 'var(--ag-text)',
+        selectedColor: 'var(--ag-primary)',
       },
       row: {
         background: 'transparent',
-        hoverBackground: 'rgba(35, 89, 157, 0.05)',
-        color: '#1c344d',
+        hoverBackground: 'var(--ag-primary-softer)',
+        color: 'var(--ag-text)',
       },
-      bodyCell: { borderColor: 'rgba(28, 52, 77, 0.08)' },
+      bodyCell: { borderColor: 'var(--ag-divider)' },
       footer: { background: 'transparent' },
     },
-    paginator: {
-      root: { background: 'transparent' },
-    },
+    paginator: { root: { background: 'transparent' } },
   },
 });

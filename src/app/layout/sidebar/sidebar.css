@@ -1,4 +1,3 @@
-/* Contêiner fixo do menu. Desktop: painel flutuante abaixo do cabeçalho. */
 .lateral {
   position: fixed;
   top: calc(var(--ag-header-h) + var(--ag-gutter));
@@ -25,7 +24,6 @@
   overscroll-behavior: contain;
 }
 
-/* Celular/tablet: gaveta que entra pela esquerda; só a aba fica à mostra. */
 .lateral--gaveta {
   top: 0;
   bottom: 0;
@@ -43,7 +41,7 @@
   padding-top: var(--ag-space-3);
   border-width: 0 1px 0 0;
   border-radius: 0 var(--ag-radius-xl) var(--ag-radius-xl) 0;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--ag-glass-bg-strong);
   box-shadow: 0 24px 60px rgba(23, 38, 59, 0.22);
   visibility: hidden;
   transition: visibility 0s linear var(--ag-duration);
@@ -54,7 +52,6 @@
   transition: visibility 0s linear 0s;
 }
 
-/* Seta de expandir/recolher presa à borda direita do menu. */
 .alternador {
   position: absolute;
   top: 22px;
@@ -65,10 +62,10 @@
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--ag-glass-border);
   border-radius: 50%;
   color: var(--ag-primary);
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--ag-surface);
   box-shadow: 0 4px 14px rgba(24, 45, 73, 0.16);
   cursor: pointer;
   transition:
@@ -79,7 +76,7 @@
 
 .alternador:hover {
   color: #fff;
-  background: var(--ag-primary);
+  background: var(--ag-brand);
   box-shadow: 0 6px 18px rgba(35, 89, 157, 0.35);
 }
 
@@ -87,12 +84,10 @@
   transition: transform var(--ag-duration) var(--ag-ease);
 }
 
-/* Menu aberto: a seta aponta para a esquerda (recolher/fechar). */
 .alternador[aria-expanded='true'] .alternador__seta {
   transform: rotate(180deg);
 }
 
-/* No celular a seta vira uma aba na borda esquerda da tela. */
 .lateral--gaveta .alternador {
   top: calc(var(--ag-header-h) + 14px);
   right: -26px;
@@ -128,7 +123,7 @@
   height: 32px;
   border-radius: 10px;
   color: #fff;
-  background: linear-gradient(140deg, var(--ag-navy), var(--ag-primary) 60%, var(--ag-accent));
+  background: linear-gradient(140deg, var(--ag-brand-dark), var(--ag-brand) 60%, var(--ag-accent));
 }
 
 .sidebar__grupo-titulo {
@@ -183,7 +178,7 @@
 .sidebar__link--ativo,
 .sidebar__link--ativo:hover {
   color: #fff;
-  background: linear-gradient(135deg, var(--ag-primary) 0%, var(--ag-accent) 100%);
+  background: linear-gradient(135deg, var(--ag-brand) 0%, var(--ag-accent) 100%);
   box-shadow: 0 8px 20px rgba(35, 89, 157, 0.28);
 }
 
@@ -200,7 +195,6 @@
   transition: opacity var(--ag-duration) var(--ag-ease);
 }
 
-/* Trilho: só ícones. Os rótulos continuam disponíveis para leitores de tela. */
 .sidebar--recolhido .sidebar__link {
   justify-content: center;
   padding: 0;

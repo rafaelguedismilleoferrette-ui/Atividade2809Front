@@ -1,11 +1,6 @@
 import { Routes } from '@angular/router';
 import { MainLayout } from './layout/main-layout/main-layout';
 
-/**
- * Para adicionar um módulo (ex.: Veículos, quando a API existir):
- * 1. crie a rota filha abaixo com `loadComponent`;
- * 2. inclua o item em `layout/navegacao.ts`.
- */
 export const routes: Routes = [
   {
     path: '',
@@ -42,6 +37,14 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./components/cliente/cliente-cadastrar/cliente-cadastrar').then(
                 (m) => m.ClienteCadastrar,
+              ),
+          },
+          {
+            path: ':id',
+            title: 'Ficha do cliente',
+            loadComponent: () =>
+              import('./components/cliente/cliente-detalhes/cliente-detalhes').then(
+                (m) => m.ClienteDetalhes,
               ),
           },
         ],

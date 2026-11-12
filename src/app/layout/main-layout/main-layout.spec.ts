@@ -8,7 +8,6 @@ import { MainLayout } from './main-layout';
 @Component({ template: '<h1 tabindex="-1">Página</h1>' })
 class PaginaFalsa {}
 
-/** Simula `window.matchMedia` respondendo como celular ou desktop. */
 function simularTela(largura: number) {
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
@@ -56,6 +55,8 @@ describe('MainLayout (menu lateral)', () => {
   afterEach(() => {
     delete (window as Partial<Window>).matchMedia;
     document.body.classList.remove('ag-scroll-bloqueado');
+    document.documentElement.classList.remove('modo-escuro');
+    localStorage.removeItem('auto-gestao:preferencias');
   });
 
   it('tem um único cabeçalho, um menu e a área de conteúdo', async () => {
@@ -70,9 +71,22 @@ describe('MainLayout (menu lateral)', () => {
 
   it('o controle do menu é a seta na lateral, não um botão no cabeçalho', async () => {
     const { el, botao } = await criar(1440);
-    expect(el.querySelector('app-header button')).toBeNull();
+    expect(el.querySelector('app-header button[aria-controls="menu-lateral"]')).toBeNull();
+    expect(el.querySelector('app-header button[aria-label="Ativar modo escuro"]')).not.toBeNull();
     expect(botao.closest('app-sidebar')).not.toBeNull();
     expect(botao.querySelector('svg.alternador__seta')).not.toBeNull();
+  });
+
+  it('alterna o tema pelo cabeçalho e atualiza o rótulo do botão', async () => {
+    const { el, fixture } = await criar(1440);
+    el.querySelector<HTMLButtonElement>('button[aria-label="Ativar modo escuro"]')!.click();
+    await fixture.whenStable();
+    expect(document.documentElement.classList.contains('modo-escuro')).toBe(true);
+    const botao = el.querySelector<HTMLButtonElement>('button[aria-label="Ativar modo claro"]')!;
+    expect(botao.getAttribute('aria-pressed')).toBe('true');
+    botao.click();
+    await fixture.whenStable();
+    expect(document.documentElement.classList.contains('modo-escuro')).toBe(false);
   });
 
   describe('no desktop', () => {

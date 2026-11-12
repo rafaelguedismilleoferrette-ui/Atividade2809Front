@@ -2,6 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { FilterSlash } from '@primeicons/angular/filter-slash';
+import { Eye } from '@primeicons/angular/eye';
 import { MapMarker } from '@primeicons/angular/map-marker';
 import { Pencil } from '@primeicons/angular/pencil';
 import { Plus } from '@primeicons/angular/plus';
@@ -23,6 +24,7 @@ import { mensagemErroHttp } from '../../../core/http/erro-api';
 import { rotuloCidade } from '../../../core/models/cidade.model';
 import { Cliente, TIPOS_PESSOA, TipoPessoa } from '../../../core/models/cliente.model';
 import { ClienteService } from '../../../core/services/cliente-service';
+import { ClienteListaEstado } from '../../../core/services/cliente-lista-estado';
 import { NotificacaoService } from '../../../core/services/notificacao-service';
 import {
   OPCOES_ITENS_POR_PAGINA,
@@ -52,6 +54,7 @@ import { filtrarClientes } from './cliente-filtro';
     DocumentoPipe,
     TelefonePipe,
     FilterSlash,
+    Eye,
     MapMarker,
     Pencil,
     Plus,
@@ -69,16 +72,16 @@ export class ClienteListar implements OnInit {
   private readonly confirmacao = inject(ConfirmationService);
   private readonly notificacao = inject(NotificacaoService);
   protected readonly preferencias = inject(PreferenciasService);
+  protected readonly estado = inject(ClienteListaEstado);
 
   protected readonly clientes = signal<Cliente[]>([]);
   protected readonly carregando = signal(true);
   protected readonly erro = signal<string | null>(null);
   protected readonly excluindoId = signal<number | null>(null);
 
-  protected readonly busca = signal('');
-  protected readonly tipo = signal<TipoPessoa | null>(null);
-  /** Índice da primeira linha exibida (paginação do p-table). */
-  protected readonly primeiro = signal(0);
+  protected readonly busca = this.estado.busca;
+  protected readonly tipo = this.estado.tipo;
+  protected readonly primeiro = this.estado.primeiro;
 
   protected readonly tipoPessoaOptions = [
     { descricao: 'Todos os tipos', valor: null },
@@ -87,12 +90,40 @@ export class ClienteListar implements OnInit {
   protected readonly opcoesLinhas = [...OPCOES_ITENS_POR_PAGINA];
   protected readonly linhasSkeleton = Array.from({ length: 5 }, (_, i) => i);
   protected readonly rotuloCidade = rotuloCidade;
+  protected readonly estados = computed(() => {
+    const ufs = this.clientes()
+      .map((cliente) => cliente.cidade?.estado?.uf)
+      .filter(Boolean);
+    return [...new Set(ufs)].sort().map((uf) => ({ rotulo: uf, valor: uf }));
+  });
+  protected readonly cidades = computed(() => {
+    const cidades = new Map<number, { rotulo: string; valor: number }>();
+    for (const cliente of this.clientes()) {
+      const cidade = cliente.cidade;
+      if (cidade && (!this.estado.uf() || cidade.estado?.uf === this.estado.uf())) {
+        cidades.set(cidade.id, { rotulo: rotuloCidade(cidade), valor: cidade.id });
+      }
+    }
+    return [...cidades.values()].sort((a, b) => a.rotulo.localeCompare(b.rotulo, 'pt-BR'));
+  });
 
   protected readonly clientesFiltrados = computed(() =>
-    filtrarClientes(this.clientes(), this.busca(), this.tipo()),
+    filtrarClientes(
+      this.clientes(),
+      this.busca(),
+      this.tipo(),
+      this.estado.cidadeId(),
+      this.estado.uf(),
+      this.estado.somenteIncompletos(),
+    ),
   );
   protected readonly filtrosAtivos = computed(
-    () => this.busca().trim() !== '' || this.tipo() !== null,
+    () =>
+      this.busca().trim() !== '' ||
+      this.tipo() !== null ||
+      this.estado.cidadeId() !== null ||
+      this.estado.uf() !== null ||
+      this.estado.somenteIncompletos(),
   );
 
   ngOnInit(): void {
@@ -105,6 +136,11 @@ export class ClienteListar implements OnInit {
     this.clienteService.listarClientes().subscribe({
       next: (clientes) => {
         this.clientes.set(clientes);
+        const total = this.clientesFiltrados().length;
+        const linhas = this.preferencias.itensPorPagina();
+        if (this.primeiro() >= total) {
+          this.primeiro.set(total ? Math.floor((total - 1) / linhas) * linhas : 0);
+        }
         this.carregando.set(false);
       },
       error: (erro: unknown) => {
@@ -125,9 +161,30 @@ export class ClienteListar implements OnInit {
   }
 
   protected limparFiltros(): void {
-    this.busca.set('');
-    this.tipo.set(null);
+    this.estado.limpar();
+  }
+
+  protected alterarUf(uf: string | null): void {
+    this.estado.uf.set(uf);
+    this.estado.cidadeId.set(null);
     this.primeiro.set(0);
+  }
+
+  protected alterarCidade(id: number | null): void {
+    this.estado.cidadeId.set(id);
+    this.primeiro.set(0);
+  }
+
+  protected alterarIncompletos(valor: boolean): void {
+    this.estado.somenteIncompletos.set(valor);
+    this.primeiro.set(0);
+  }
+
+  protected alterarOrdenacao(evento: { field: string; order: number }): void {
+    const mudou = this.estado.campoOrdem() !== evento.field || this.estado.ordem() !== evento.order;
+    this.estado.campoOrdem.set(evento.field);
+    this.estado.ordem.set(evento.order);
+    if (mudou) this.primeiro.set(0);
   }
 
   protected confirmarExclusao(cliente: Cliente): void {

@@ -14,7 +14,7 @@
 
   <div class="filtros" role="search" aria-label="Filtrar clientes">
     <div class="filtros__busca">
-      <label class="ag-sr-only" for="busca-cliente">Buscar por nome ou CPF/CNPJ</label>
+      <label class="filtro-rotulo" for="busca-cliente">Buscar cliente</label>
       <p-iconfield>
         <p-inputicon>
           <svg data-p-icon="search" size="16"></svg>
@@ -24,7 +24,7 @@
           id="busca-cliente"
           type="search"
           autocomplete="off"
-          placeholder="Buscar por nome ou CPF/CNPJ"
+          placeholder="Nome, CPF/CNPJ, telefone ou e-mail"
           [ngModel]="busca()"
           (ngModelChange)="alterarBusca($event)"
         />
@@ -32,7 +32,7 @@
     </div>
 
     <div class="filtros__tipo">
-      <label class="ag-sr-only" for="filtro-tipo">Tipo de pessoa</label>
+      <label class="filtro-rotulo" for="filtro-tipo">Tipo de pessoa</label>
       <p-select
         inputId="filtro-tipo"
         [options]="tipoPessoaOptions"
@@ -42,6 +42,57 @@
         (ngModelChange)="alterarTipo($event)"
       />
     </div>
+
+    <div class="filtros__uf">
+      <label class="filtro-rotulo" for="filtro-uf">UF</label>
+      <p-select
+        inputId="filtro-uf"
+        [options]="estados()"
+        optionLabel="rotulo"
+        optionValue="valor"
+        placeholder="Todas"
+        [showClear]="true"
+        [ngModel]="estado.uf()"
+        (ngModelChange)="alterarUf($event)"
+      />
+    </div>
+
+    <div class="filtros__cidade">
+      <label class="filtro-rotulo" for="filtro-cidade">Cidade</label>
+      <p-select
+        inputId="filtro-cidade"
+        [options]="cidades()"
+        optionLabel="rotulo"
+        optionValue="valor"
+        placeholder="Todas as cidades"
+        [showClear]="true"
+        [filter]="true"
+        filterBy="rotulo"
+        [ngModel]="estado.cidadeId()"
+        (ngModelChange)="alterarCidade($event)"
+      />
+    </div>
+
+    <label class="filtros__incompletos">
+      <input
+        type="checkbox"
+        [ngModel]="estado.somenteIncompletos()"
+        (ngModelChange)="alterarIncompletos($event)"
+      />
+      Somente cadastros incompletos
+    </label>
+
+    <button
+      pButton
+      type="button"
+      severity="secondary"
+      [outlined]="true"
+      [disabled]="!filtrosAtivos()"
+      (click)="limparFiltros()"
+    >
+      <svg data-p-icon="filter-slash" size="16"></svg>
+      Limpar filtros
+    </button>
 
     <button
       pButton
@@ -122,10 +173,12 @@
       class="tabela-clientes"
       [value]="clientesFiltrados()"
       dataKey="id"
-      sortField="nome"
-      [sortOrder]="1"
+      [sortField]="estado.campoOrdem()"
+      [sortOrder]="estado.ordem()"
+      [resetPageOnSort]="false"
+      (onSort)="alterarOrdenacao($event)"
       [paginator]="true"
-      [rows]="preferencias.itensPorPagina()"
+      [(rows)]="preferencias.itensPorPagina"
       [(first)]="primeiro"
       [rowsPerPageOptions]="opcoesLinhas"
       [showCurrentPageReport]="true"
@@ -189,6 +242,18 @@
           </td>
           <td class="col-acoes">
             <div class="acoes">
+              <a
+                pButton
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [routerLink]="['/clientes', cliente.id]"
+                [attr.aria-label]="'Ver ficha de ' + cliente.nome"
+                pTooltip="Ver ficha"
+                tooltipPosition="top"
+              >
+                <svg data-p-icon="eye" size="16"></svg>
+              </a>
               <a
                 pButton
                 [text]="true"

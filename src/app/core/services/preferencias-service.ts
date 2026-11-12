@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { effect, inject, PLATFORM_ID, Service, signal } from '@angular/core';
 
 export const OPCOES_ITENS_POR_PAGINA = [5, 10, 20, 50] as const;
@@ -6,34 +6,37 @@ export const OPCOES_ITENS_POR_PAGINA = [5, 10, 20, 50] as const;
 interface Preferencias {
   menuRecolhido: boolean;
   itensPorPagina: number;
+  modoEscuro: boolean;
 }
 
 const CHAVE = 'auto-gestao:preferencias';
-const PADRAO: Preferencias = { menuRecolhido: false, itensPorPagina: 10 };
+const PADRAO: Preferencias = { menuRecolhido: false, itensPorPagina: 10, modoEscuro: false };
 
-/**
- * Preferências da interface salvas no navegador (localStorage).
- * Não há endpoint de configurações no backend, então nada disso sai da máquina.
- */
 @Service()
 export class PreferenciasService {
   private readonly noNavegador = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly documento = inject(DOCUMENT);
   private readonly iniciais = this.ler();
 
-  /** No desktop, iniciar com o menu lateral recolhido (somente ícones). */
   readonly menuRecolhido = signal(this.iniciais.menuRecolhido);
-  /** Quantidade padrão de linhas por página nas tabelas. */
   readonly itensPorPagina = signal(this.iniciais.itensPorPagina);
+  readonly modoEscuro = signal(this.iniciais.modoEscuro);
 
   constructor() {
     effect(() => {
-      this.gravar({ menuRecolhido: this.menuRecolhido(), itensPorPagina: this.itensPorPagina() });
+      this.documento.documentElement.classList.toggle('modo-escuro', this.modoEscuro());
+      this.gravar({
+        menuRecolhido: this.menuRecolhido(),
+        itensPorPagina: this.itensPorPagina(),
+        modoEscuro: this.modoEscuro(),
+      });
     });
   }
 
   restaurarPadrao(): void {
     this.menuRecolhido.set(PADRAO.menuRecolhido);
     this.itensPorPagina.set(PADRAO.itensPorPagina);
+    this.modoEscuro.set(PADRAO.modoEscuro);
   }
 
   private ler(): Preferencias {
@@ -45,6 +48,7 @@ export class PreferenciasService {
       const itens = Number(salvo.itensPorPagina);
       return {
         menuRecolhido: salvo.menuRecolhido === true,
+        modoEscuro: salvo.modoEscuro === true,
         itensPorPagina: (OPCOES_ITENS_POR_PAGINA as readonly number[]).includes(itens)
           ? itens
           : PADRAO.itensPorPagina,
@@ -60,8 +64,6 @@ export class PreferenciasService {
     }
     try {
       localStorage.setItem(CHAVE, JSON.stringify(preferencias));
-    } catch {
-      // Armazenamento bloqueado (modo privado etc.): mantém só em memória.
-    }
+    } catch {}
   }
 }

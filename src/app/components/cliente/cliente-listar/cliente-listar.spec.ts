@@ -5,7 +5,9 @@ import { provideRouter } from '@angular/router';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
 
 import { environment } from '../../../../environments/environment';
-import { CLIENTES_TESTE } from '../../../testing/dados-teste';
+import { CLIENTES_TESTE, criarCliente } from '../../../testing/dados-teste';
+import { ClienteListaEstado } from '../../../core/services/cliente-lista-estado';
+import { PreferenciasService } from '../../../core/services/preferencias-service';
 import { ClienteListar } from './cliente-listar';
 
 const base = `${environment.apiUrl}/clientes`;
@@ -43,6 +45,50 @@ describe('ClienteListar', () => {
   }
 
   const linhas = () => el.querySelectorAll('tbody tr');
+
+  it('mantém busca, filtros, ordenação e página ao recriar a listagem', async () => {
+    const clientes = Array.from({ length: 16 }, (_, i) =>
+      criarCliente({ id: i + 1, nome: `Cliente ${i + 1}` }),
+    );
+    TestBed.inject(PreferenciasService).itensPorPagina.set(5);
+    await responderLista(clientes);
+    const estado = TestBed.inject(ClienteListaEstado);
+    const busca = el.querySelector<HTMLInputElement>('#busca-cliente')!;
+    busca.value = 'cliente';
+    busca.dispatchEvent(new Event('input'));
+    estado.tipo.set('PF');
+    estado.uf.set('PR');
+    estado.cidadeId.set(2853);
+    await fixture.whenStable();
+    el.querySelector<HTMLElement>('th.col-id')!.click();
+    await fixture.whenStable();
+    el.querySelector<HTMLButtonElement>('.p-paginator-next')!.click();
+    await fixture.whenStable();
+    expect(estado.primeiro()).toBe(5);
+    expect(estado.campoOrdem()).toBe('id');
+    fixture.destroy();
+    fixture = TestBed.createComponent(ClienteListar);
+    el = fixture.nativeElement;
+    await fixture.whenStable();
+    await responderLista(clientes);
+    expect(el.querySelector<HTMLInputElement>('#busca-cliente')!.value).toBe('cliente');
+    expect(estado.tipo()).toBe('PF');
+    expect(estado.uf()).toBe('PR');
+    expect(estado.cidadeId()).toBe(2853);
+    expect(estado.primeiro()).toBe(5);
+    expect(el.querySelector('tbody .col-id')?.textContent?.trim()).toBe('6');
+    expect(el.querySelector('a[aria-label="Ver ficha de Cliente 6"]')?.getAttribute('href')).toBe(
+      '/clientes/6',
+    );
+  });
+
+  it('volta para uma página válida quando a quantidade de clientes diminui', async () => {
+    const estado = TestBed.inject(ClienteListaEstado);
+    estado.primeiro.set(20);
+    await responderLista();
+    expect(estado.primeiro()).toBe(0);
+    expect(linhas()).toHaveLength(4);
+  });
 
   it('should create', async () => {
     expect(component).toBeTruthy();

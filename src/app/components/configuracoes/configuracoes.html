@@ -17,6 +17,18 @@
 
     <div class="preferencia">
       <div class="preferencia__textos">
+        <label class="preferencia__rotulo" for="pref-tema">Modo escuro</label>
+        <p class="preferencia__ajuda">Usar cores escuras nas telas do sistema.</p>
+      </div>
+      <p-toggleswitch
+        inputId="pref-tema"
+        [ngModel]="preferencias.modoEscuro()"
+        (ngModelChange)="preferencias.modoEscuro.set($event)"
+      />
+    </div>
+
+    <div class="preferencia">
+      <div class="preferencia__textos">
         <label class="preferencia__rotulo" for="pref-menu">Iniciar com o menu recolhido</label>
         <p class="preferencia__ajuda">No computador, mostra apenas os ícones do menu lateral.</p>
       </div>

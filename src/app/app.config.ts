@@ -14,7 +14,6 @@ import { AutoGestaoPreset } from './core/tema/auto-gestao.preset';
 import { TRADUCAO_PRIMENG } from './core/tema/traducao-primeng';
 import { TituloPaginaStrategy } from './core/titulo-pagina.strategy';
 
-// Números e datas no formato brasileiro (1.284 / 19/10/2026).
 registerLocaleData(localePt, 'pt-BR');
 
 export const appConfig: ApplicationConfig = {
@@ -29,10 +28,9 @@ export const appConfig: ApplicationConfig = {
     ConfirmationService,
     providePrimeNG({
       theme: {
-        // Tema Aura com a paleta da Auto Gestão (o Lara também está disponível em @primeuix/themes/lara)
         preset: AutoGestaoPreset,
         options: {
-          darkModeSelector: 'none',
+          darkModeSelector: '.modo-escuro',
         },
       },
       translation: TRADUCAO_PRIMENG,

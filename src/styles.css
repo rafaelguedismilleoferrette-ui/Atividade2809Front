@@ -1,12 +1,12 @@
-/* ==========================================================================
-   Auto Gestão — design system
-   Tokens, base, superfície de vidro (glassmorphism) e utilitários de layout.
-   ========================================================================== */
-
 :root {
   color-scheme: light;
+  --ag-brand: #23599d;
+  --ag-brand-dark: #17263b;
+  --ag-surface: #f6f9fc;
+  --ag-input-bg: rgba(255, 255, 255, 0.86);
+  --ag-input-border: rgba(28, 52, 77, 0.2);
+  --ag-fallback-bg: #f8fbff;
 
-  /* Paleta */
   --ag-navy: #17263b;
   --ag-primary: #23599d;
   --ag-accent: #3a6fb0;
@@ -21,7 +21,6 @@
   --ag-danger-soft: rgba(180, 35, 24, 0.1);
   --ag-divider: rgba(28, 52, 77, 0.1);
 
-  /* Vidro */
   --ag-glass-bg: rgba(255, 255, 255, 0.55);
   --ag-glass-bg-strong: rgba(255, 255, 255, 0.76);
   --ag-glass-border: rgba(255, 255, 255, 0.75);
@@ -29,13 +28,11 @@
   --ag-glass-shadow: 0 8px 32px rgba(24, 45, 73, 0.08);
   --ag-glass-shadow-hover: 0 14px 40px rgba(24, 45, 73, 0.13);
 
-  /* Bordas */
   --ag-radius-sm: 10px;
   --ag-radius-md: 14px;
   --ag-radius-lg: 18px;
   --ag-radius-xl: 24px;
 
-  /* Espaçamento (escala de 4px) */
   --ag-space-1: 4px;
   --ag-space-2: 8px;
   --ag-space-3: 12px;
@@ -46,18 +43,15 @@
   --ag-space-10: 40px;
   --ag-space-12: 48px;
 
-  /* Layout */
   --ag-header-h: 68px;
   --ag-sidebar-w: 264px;
   --ag-sidebar-w-recolhido: 80px;
   --ag-gutter: 16px;
   --ag-content-max: 1440px;
 
-  /* Movimento */
   --ag-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ag-duration: 260ms;
 
-  /* Foco */
   --ag-focus-outline: 3px solid rgba(58, 111, 176, 0.6);
 
   --ag-font:
@@ -70,10 +64,6 @@
     --ag-gutter: 20px;
   }
 }
-
-/* --------------------------------------------------------------------------
-   Base
-   -------------------------------------------------------------------------- */
 
 *,
 *::before,
@@ -97,7 +87,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Fundo com manchas suaves: dá profundidade para o efeito de vidro. */
 body::before {
   content: '';
   position: fixed;
@@ -111,7 +100,6 @@ body::before {
     linear-gradient(160deg, #e7eff8 0%, #dce7f2 48%, #d2dfed 100%);
 }
 
-/* Trava a rolagem do fundo quando a gaveta do menu está aberta no celular. */
 body.ag-scroll-bloqueado {
   overflow: hidden;
   touch-action: none;
@@ -146,10 +134,6 @@ a {
   border: 0;
 }
 
-/* --------------------------------------------------------------------------
-   Superfície de vidro
-   -------------------------------------------------------------------------- */
-
 .glass,
 .glass-panel {
   background: var(--ag-glass-bg);
@@ -160,26 +144,23 @@ a {
   box-shadow: var(--ag-glass-shadow);
 }
 
-/* Painéis de conteúdo: mais opacos para garantir contraste do texto. */
 .glass-panel {
   background: var(--ag-glass-bg-strong);
 }
 
-/* Navegadores sem backdrop-filter: vidro vira superfície quase opaca. */
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
   .glass {
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--ag-fallback-bg);
   }
   .glass-panel {
-    background: rgba(255, 255, 255, 0.96);
+    background: var(--ag-fallback-bg);
   }
 }
 
-/* Quem pede menos transparência no sistema recebe superfícies sólidas. */
 @media (prefers-reduced-transparency: reduce) {
   .glass,
   .glass-panel {
-    background: #fff;
+    background: var(--ag-fallback-bg);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
@@ -222,10 +203,6 @@ a {
   color: var(--ag-text-secondary);
   font-size: 0.875rem;
 }
-
-/* --------------------------------------------------------------------------
-   Formulários
-   -------------------------------------------------------------------------- */
 
 .form-grid {
   display: grid;
@@ -318,7 +295,6 @@ a {
   margin-top: 2px;
 }
 
-/* Componentes do PrimeNG ocupam toda a largura do campo. */
 .campo .p-inputtext,
 .campo .p-select,
 .campo .p-autocomplete,
@@ -364,10 +340,6 @@ a {
     flex: 1 1 100%;
   }
 }
-
-/* --------------------------------------------------------------------------
-   Botões e elementos auxiliares
-   -------------------------------------------------------------------------- */
 
 .p-button {
   border-radius: var(--ag-radius-sm);
@@ -423,7 +395,6 @@ a {
   background: rgba(58, 111, 176, 0.14);
 }
 
-/* Mesmas identidades de cor do dashboard: PF azul, PJ verde-azulado. */
 .selo--pj {
   color: #0b5d54;
   background: rgba(21, 154, 140, 0.15);
@@ -441,7 +412,6 @@ a {
   background: var(--ag-danger-soft);
 }
 
-/* Toasts e diálogos sobre o vidro */
 .p-toast-message {
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
@@ -456,10 +426,6 @@ a {
   backdrop-filter: blur(3px);
 }
 
-/* --------------------------------------------------------------------------
-   Movimento reduzido
-   -------------------------------------------------------------------------- */
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -469,4 +435,42 @@ a {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+:root.modo-escuro {
+  color-scheme: dark;
+  --ag-navy: #e4edf8;
+  --ag-primary: #9ac6ff;
+  --ag-accent: #73a9ed;
+  --ag-bg: #101a29;
+  --ag-text: #dde6f2;
+  --ag-text-secondary: #a9b9cd;
+  --ag-primary-soft: rgba(115, 169, 237, 0.18);
+  --ag-primary-softer: rgba(115, 169, 237, 0.09);
+  --ag-success: #84dfaa;
+  --ag-success-soft: rgba(70, 175, 113, 0.16);
+  --ag-danger: #ffaba3;
+  --ag-danger-soft: rgba(237, 100, 89, 0.14);
+  --ag-divider: rgba(173, 194, 220, 0.19);
+  --ag-glass-bg: rgba(27, 42, 61, 0.88);
+  --ag-glass-bg-strong: rgba(27, 42, 61, 0.96);
+  --ag-glass-border: rgba(144, 170, 202, 0.23);
+  --ag-surface: #1c2b3e;
+  --ag-input-bg: #152237;
+  --ag-input-border: #52647d;
+  --ag-fallback-bg: #1c2b3e;
+}
+
+.modo-escuro body::before {
+  background: radial-gradient(50rem 40rem at 90% 0%, #203652, transparent 75%), #101a29;
+}
+
+.modo-escuro .selo--pf {
+  color: #b3d4ff;
+  background: rgba(115, 169, 237, 0.2);
+}
+
+.modo-escuro .selo--pj {
+  color: #8fe0d5;
+  background: rgba(21, 154, 140, 0.22);
 }

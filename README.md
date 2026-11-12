@@ -70,11 +70,14 @@ Indicadores calculados a partir de `GET /clientes/listar-clientes` — nenhum n�
 total de clientes, pessoas físicas, pessoas jurídicas, composição PF × PJ, cidades com mais
 clientes, cadastros sem cidade e últimos cadastrados. Inclui estados de carregamento, vazio e erro.
 
-### Clientes (`/clientes`, `/clientes/novo`, `/clientes/:id/editar`)
+### Clientes (`/clientes`, `/clientes/novo`, `/clientes/:id`, `/clientes/:id/editar`)
 
 - **Listagem:** ID, nome, tipo, CPF/CNPJ, telefone, e-mail e cidade; busca por nome (ignora
-  acentos) ou CPF/CNPJ (com ou sem pontuação), filtro por tipo, ordenação, paginação e coluna de
+  acentos), CPF/CNPJ, telefone ou e-mail; filtros por tipo, cidade, UF e cadastros incompletos, ordenação, paginação e coluna de
   ações sempre visível. Em telas pequenas, cada linha vira um cartão.
+- **Ficha do cliente:** consulta de dados, contatos e endereço em `/clientes/:id`, com acesso à edição. A ficha é aberta pelo ícone de olho na listagem.
+- **Retorno à lista:** busca, filtros, ordenação e página permanecem ao navegar entre as telas. Recarregar a aplicação reinicia os filtros. A quantidade de linhas continua salva nas preferências.
+- **Cadastros incompletos:** considera campos obrigatórios vazios ou cidade ausente. Não substitui a validação dos dados. As opções de cidade e UF vêm dos clientes carregados.
 - **Cadastro/edição:** o mesmo formulário (Reactive Forms) para POST e PUT, com:
   - campos obrigatórios marcados e mensagem de erro própria em cada campo;
   - máscara dinâmica de CPF/CNPJ conforme o tipo de pessoa, e máscaras de telefone (fixo/celular)
@@ -104,9 +107,13 @@ a busca. O filtro vazio consulta as primeiras marcas. A rota está no menu later
 O backend atual oferece apenas consulta de marcas. Cadastro, edição e exclusão
 dependem de novos endpoints antes de adicionar os formulários correspondentes.
 
+### Modo escuro
+
+O botão de lua/sol no cabeçalho alterna o tema. Também é possível mudar em Configurações. A preferência é salva no navegador e vale para as telas, campos, menus e tabelas.
+
 ### Configurações (`/configuracoes`)
 
-Preferências salvas no navegador (iniciar com menu recolhido, linhas por página) e teste de
+Preferências salvas no navegador (modo escuro, iniciar com menu recolhido e linhas por página) e teste de
 conexão com a API, que mostra o tempo de resposta e o total de clientes.
 
 ---
@@ -245,5 +252,4 @@ no `application.properties`.
 2. **Orçamento do bundle inicial:** o build avisa ~789 kB para um limite de 500 kB (antes das
    mudanças já eram 769 kB). O peso vem do PrimeNG, do tema e dos ícones; o código da aplicação
    tem ~110 kB e as telas são carregadas sob demanda.
-3. Modo escuro não implementado (o projeto já usava `darkModeSelector: 'none'`).
-4. Sair do formulário pelo menu não pede confirmação de descarte (só o botão "Cancelar" pede).
+3. Sair do formulário pelo menu não pede confirmação de descarte (só o botão "Cancelar" pede).

@@ -18,6 +18,21 @@
     <p class="header__contexto">{{ titulo() }}</p>
   }
 
+  <button
+    class="botao-icone"
+    type="button"
+    [attr.aria-pressed]="preferencias.modoEscuro()"
+    [attr.aria-label]="preferencias.modoEscuro() ? 'Ativar modo claro' : 'Ativar modo escuro'"
+    [attr.title]="preferencias.modoEscuro() ? 'Ativar modo claro' : 'Ativar modo escuro'"
+    (click)="preferencias.modoEscuro.set(!preferencias.modoEscuro())"
+  >
+    @if (preferencias.modoEscuro()) {
+      <svg data-p-icon="sun" size="20" aria-hidden="true"></svg>
+    } @else {
+      <svg data-p-icon="moon" size="20" aria-hidden="true"></svg>
+    }
+  </button>
+
   <div class="header__usuario" title="Autenticação ainda não disponível no backend">
     <span class="header__avatar" aria-hidden="true">
       <svg data-p-icon="user" size="18"></svg>

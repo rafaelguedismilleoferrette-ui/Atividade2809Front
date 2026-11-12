@@ -2,7 +2,6 @@
   display: block;
 }
 
-/* O painel de opções é anexado ao <body>, por isso os estilos usam ::ng-deep. */
 ::ng-deep .opcao-cidade {
   display: flex;
   align-items: center;
@@ -25,7 +24,7 @@
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #1a4071;
+  color: var(--ag-primary);
   background: rgba(58, 111, 176, 0.14);
 }
 

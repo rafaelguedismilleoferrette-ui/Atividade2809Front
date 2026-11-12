@@ -2,12 +2,10 @@
   transition: opacity var(--ag-duration) var(--ag-ease);
 }
 
-/* Ao atualizar, mantém o quadro anterior esmaecido (sem pular o layout). */
 .painel-dados--atualizando {
   opacity: 0.6;
 }
 
-/* --- Indicadores --- */
 .kpis {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -61,12 +59,12 @@
 }
 
 .kpi__icone--pf {
-  color: #2c5a92;
+  color: var(--ag-primary);
   background: rgba(58, 111, 176, 0.14);
 }
 
 .kpi__icone--pj {
-  color: #0d6b61;
+  color: var(--ag-success);
   background: rgba(21, 154, 140, 0.14);
 }
 
@@ -103,7 +101,6 @@
   text-decoration: underline;
 }
 
-/* --- Grade de painéis --- */
 .grade {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -123,7 +120,6 @@
   grid-column: span 6;
 }
 
-/* --- Atalhos --- */
 .atalhos {
   display: flex;
   flex-direction: column;
@@ -136,11 +132,11 @@
   align-items: center;
   gap: var(--ag-space-3);
   padding: var(--ag-space-3);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--ag-glass-border);
   border-radius: var(--ag-radius-md);
   color: inherit;
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--ag-glass-bg);
   transition:
     border-color var(--ag-duration) var(--ag-ease),
     background-color var(--ag-duration) var(--ag-ease),
@@ -149,7 +145,7 @@
 
 .atalho:hover {
   border-color: rgba(35, 89, 157, 0.25);
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--ag-glass-bg-strong);
   transform: translateX(2px);
 }
 
@@ -161,7 +157,7 @@
   height: 40px;
   border-radius: 12px;
   color: #fff;
-  background: linear-gradient(135deg, var(--ag-primary), var(--ag-accent));
+  background: linear-gradient(135deg, var(--ag-brand), var(--ag-accent));
 }
 
 .atalho__titulo {
@@ -181,7 +177,6 @@
   color: var(--ag-primary);
 }
 
-/* --- Recentes --- */
 .recentes {
   display: flex;
   flex-direction: column;
@@ -242,7 +237,6 @@
   color: var(--ag-text-secondary);
 }
 
-/* --- Responsivo --- */
 @media (max-width: 1199.98px) {
   .grade__composicao,
   .grade__acoes,

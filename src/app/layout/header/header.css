@@ -13,7 +13,7 @@
   padding: 0 var(--ag-gutter);
   border-width: 0 0 1px;
   border-radius: 0;
-  background: rgba(255, 255, 255, 0.62);
+  background: var(--ag-glass-bg-strong);
 }
 
 .marca {
@@ -37,8 +37,8 @@
   color: #fff;
   background: linear-gradient(
     140deg,
-    var(--ag-navy) 0%,
-    var(--ag-primary) 60%,
+    var(--ag-brand-dark) 0%,
+    var(--ag-brand) 60%,
     var(--ag-accent) 100%
   );
   box-shadow: 0 6px 16px rgba(35, 89, 157, 0.3);
@@ -87,11 +87,10 @@
   display: flex;
   align-items: center;
   gap: var(--ag-space-2);
-  margin-left: auto;
   padding: 4px 12px 4px 4px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--ag-glass-border);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--ag-glass-bg);
 }
 
 .header__avatar {
@@ -137,4 +136,9 @@
   .header__divisor {
     display: none;
   }
+}
+
+.header > .botao-icone {
+  margin-left: auto;
+  flex: none;
 }

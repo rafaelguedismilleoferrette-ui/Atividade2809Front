@@ -1,0 +1,91 @@
+<app-cabecalho-pagina
+  titulo="Ficha do cliente"
+  sobretitulo="Clientes"
+  subtitulo="Dados pessoais, contatos e endereço do cliente."
+>
+  <a pButton routerLink="/clientes" severity="secondary" [outlined]="true">
+    <svg data-p-icon="arrow-left" size="16"></svg> Voltar para a lista
+  </a>
+  @if (cliente(); as dados) {
+    <a pButton [routerLink]="['/clientes', dados.id, 'editar']">
+      <svg data-p-icon="pencil" size="16"></svg> Editar cliente
+    </a>
+  }
+</app-cabecalho-pagina>
+
+<section class="glass-panel painel">
+  @if (carregando()) {
+    <p role="status">Carregando ficha do cliente...</p>
+  } @else if (erro()) {
+    <app-estado-painel tipo="erro" titulo="Não foi possível abrir a ficha" [mensagem]="erro()!">
+      <a pButton routerLink="/clientes">Voltar para a lista</a>
+    </app-estado-painel>
+  } @else if (cliente(); as dados) {
+    <div class="ficha-topo">
+      <div>
+        <p class="ficha-id">Cliente #{{ dados.id }}</p>
+        <h2>{{ dados.nome }}</h2>
+      </div>
+      @if (dados.tipoPessoa) {
+        <span
+          class="selo"
+          [class.selo--pf]="dados.tipoPessoa === 'PF'"
+          [class.selo--pj]="dados.tipoPessoa === 'PJ'"
+        >
+          {{ dados.tipoPessoa === 'PF' ? 'Pessoa física' : 'Pessoa jurídica' }}
+        </span>
+      }
+    </div>
+
+    <div class="ficha-grid">
+      <section aria-labelledby="ficha-dados">
+        <h3 id="ficha-dados">Dados e contatos</h3>
+        <dl>
+          <div>
+            <dt>CPF/CNPJ</dt>
+            <dd>{{ (dados.cpfCnpj | documento) || 'Não informado' }}</dd>
+          </div>
+          <div>
+            <dt>Telefone</dt>
+            <dd>{{ (dados.telefone | telefone) || 'Não informado' }}</dd>
+          </div>
+          <div>
+            <dt>E-mail</dt>
+            <dd>
+              @if (dados.email) {
+                <a [href]="'mailto:' + dados.email">{{ dados.email }}</a>
+              } @else {
+                Não informado
+              }
+            </dd>
+          </div>
+        </dl>
+      </section>
+      <section aria-labelledby="ficha-endereco">
+        <h3 id="ficha-endereco">Endereço</h3>
+        <dl>
+          <div>
+            <dt>Logradouro</dt>
+            <dd>{{ dados.logradouro || 'Não informado' }}</dd>
+          </div>
+          <div>
+            <dt>Número</dt>
+            <dd>{{ dados.numero || 'Não informado' }}</dd>
+          </div>
+          <div>
+            <dt>Bairro</dt>
+            <dd>{{ dados.bairro || 'Não informado' }}</dd>
+          </div>
+          <div>
+            <dt>CEP</dt>
+            <dd>{{ (dados.cep | cep) || 'Não informado' }}</dd>
+          </div>
+          <div>
+            <dt>Cidade / UF</dt>
+            <dd>{{ rotuloCidade(dados.cidade) || 'Não informada' }}</dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+  }
+</section>

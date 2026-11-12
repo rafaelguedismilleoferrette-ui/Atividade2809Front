@@ -91,4 +91,15 @@ describe('Navegação', () => {
     const harness = await RouterTestingHarness.create('/veiculos');
     expect(harness.routeNativeElement?.textContent).toContain('Página não encontrada');
   });
+
+  it('abre a ficha pela rota principal de clientes', async () => {
+    const harness = await RouterTestingHarness.create('/clientes/5');
+    TestBed.inject(HttpTestingController)
+      .expectOne((r) => r.url.endsWith('/clientes/buscar-cliente/5'))
+      .flush({ id: 5, nome: 'Cliente de teste', cidade: null });
+    await harness.fixture.whenStable();
+    expect(harness.routeNativeElement?.querySelector('app-cliente-detalhes')).not.toBeNull();
+    expect(harness.routeNativeElement?.textContent).toContain('Cliente de teste');
+    expect(TestBed.inject(Title).getTitle()).toBe('Ficha do cliente · Auto Gestão');
+  });
 });
