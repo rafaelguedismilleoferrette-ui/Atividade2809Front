@@ -37,6 +37,13 @@
         Limpar
       </button>
     </div>
+    <div class="acoes">
+      <button pButton type="submit" [disabled]="carregando()">
+        <svg data-p-icon="search" size="16" aria-hidden="true"></svg>
+        Historico
+      </button>
+      
+    </div>
   </form>
 
   <div [attr.aria-busy]="carregando()" aria-live="polite">
